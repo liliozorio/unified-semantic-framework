@@ -3,11 +3,10 @@
 namespace tasks;
 require_once 'Task.php';
 
-class LowerCaseNormalizerTask implements Task
+class IBGELinearRegression implements Task
 {
     public function processing($attribute)
     {
-        return strtolower($attribute);
+        return $attribute;
     }
-
 }

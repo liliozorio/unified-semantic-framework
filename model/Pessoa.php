@@ -24,7 +24,6 @@ class Pessoa
     private $dados_adicionais;
     private $situacao;
     private $fonte;
-    private $data_localizacao;
 
 
     /**
@@ -347,22 +346,6 @@ class Pessoa
         $this->imagem = $imagem;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getDataLocalizacao()
-    {
-        return $this->data_localizacao;
-    }
-
-    /**
-     * @param mixed $fonte
-     */
-    public function setDataLocalizacao($data_localizacao)
-    {
-        $this->imagem = $data_localizacao;
-    }
-
     public function printPessoa(){
         echo "<b>Imagem:</b> " . $this->imagem . "<br>";
         echo "<b>Situacao:</b> " . $this->situacao . "<br>";
@@ -382,9 +365,12 @@ class Pessoa
         echo "<b>data_des:</b> " . $this->dt_desaparecimento . "<br>";
         echo "<b>local_des:</b> " . $this->local_desaparecimento . "<br>";
         echo "<b>dados adiconais:</b> " . $this->dados_adicionais . "<br>";
-        echo "<b>data_localizacao:</b> " . $this->data_localizacao . "<br>";
         echo "<b>circunstancia_des:</b> " . $this->circunstancia_desaparecimento . "<br>";
         echo "<b>fonte:</b> " . $this->fonte . "<br>";
         echo "<hn>";
+    }
+
+    public function insertPessoa(){
+        $BD = "http://127.0.0.1:10035/#/repositories/TESTE";
     }
 }

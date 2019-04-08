@@ -1,0 +1,116 @@
+{
+   "name": "Teste",
+   "attributes": [
+      {
+         "name": "name",
+         "task": "LowerCaseNormalizer"
+      },
+      {
+         "name": "sexo",
+         "task": "GenderTask"
+      },
+      {
+         "name": "cidade",
+         "task": "CityTask"
+      },
+      {
+         "name": "apelido",
+         "task": "LowerCaseNormalizer"
+      },
+      {
+         "name": "dt_nascimento",
+         "task": "LowerCaseNormalizer"
+      },
+      {
+         "name": "imagem",
+         "task": "LowerCaseNormalizer"
+      },
+      {
+         "name": "idade",
+         "task": "AgeTask"
+      },
+      {
+         "name": "estado",
+         "task": "LowerCaseNormalizer"
+      },
+      {
+         "name": "altura",
+         "task": "LowerCaseNormalizer"
+      },
+      {
+         "name": "peso",
+         "task": "LowerCaseNormalizer"
+      },
+      {
+         "name": "pele",
+         "task": "LowerCaseNormalizer"
+      },
+      {
+         "name": "cor_cabelo",
+         "task": "LowerCaseNormalizer"
+      },
+      {
+         "name": "cor_olho",
+         "task": "LowerCaseNormalizer"
+      },
+      {
+         "name": "mais_caracteristicas",
+         "task": "LowerCaseNormalizer"
+      },
+      {
+         "name": "dt_desaparecimento",
+         "task": "LowerCaseNormalizer"
+      },
+      {
+         "name": "local_desaparecimento",
+         "task": "LowerCaseNormalizer"
+      },
+      {
+         "name": "circunstancia_desaparecimento",
+         "task": "LowerCaseNormalizer"
+      },
+      {
+         "name": "dados_adicionais",
+         "task": "LowerCaseNormalizer"
+      },
+      {
+         "name": "situacao",
+         "task": "LowerCaseNormalizer"
+      },
+      {
+         "name": "fonte",
+         "task": "LowerCaseNormalizer"
+      }
+   ],
+   "task": [
+      {
+         "id": "GenderTask",
+         "do": "IBGELinearRegression",
+         "afterClass" : "LowerCaseNormalizer"
+      },
+      {
+         "id": "AgeTask",
+         "do": "LowerCaseNormalizer"
+      },
+      {
+         "id": "CityTask",
+         "do": "CityPrepareTask",
+         "afterClass" : "DBPediaSpotlightAnnotation"
+      },
+      {
+         "id": "CityPrepareTask",
+         "do": "LowerCaseNormalizer",
+         "afterClass" : "CityCanonicaName"
+      }
+   ],
+   "personAttributes": [
+      {
+         "name": "name",
+         "tag": "www//xmls.com/foaf/0.1/name"
+      },
+      {
+         "name": "gender",
+         "tag": "www//xmls.com/foaf/0.1/gender"
+      }
+   ]
+}
