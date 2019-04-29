@@ -2,8 +2,8 @@
    "name": "Teste",
    "attributes": [
       {
-         "name": "name",
-         "task": "LowerCaseNormalizer"
+         "name": "nome",
+         "task": "LowerCaseNormalizerTask"
       },
       {
          "name": "sexo",
@@ -14,16 +14,20 @@
          "task": "CityTask"
       },
       {
+         "name": "cidade_uri",
+         "task": "CityPrepareTask"
+      },
+      {
          "name": "apelido",
-         "task": "LowerCaseNormalizer"
+         "task": "LowerCaseNormalizerTask"
       },
       {
          "name": "dt_nascimento",
-         "task": "LowerCaseNormalizer"
+         "task": "LowerCaseNormalizerTask"
       },
       {
          "name": "imagem",
-         "task": "LowerCaseNormalizer"
+         "task": "LowerCaseNormalizerTask"
       },
       {
          "name": "idade",
@@ -31,81 +35,80 @@
       },
       {
          "name": "estado",
-         "task": "LowerCaseNormalizer"
+         "task": "LowerCaseNormalizerTask"
       },
       {
          "name": "altura",
-         "task": "LowerCaseNormalizer"
+         "task": "LowerCaseNormalizerTask"
       },
       {
          "name": "peso",
-         "task": "LowerCaseNormalizer"
+         "task": "LowerCaseNormalizerTask"
       },
       {
          "name": "pele",
-         "task": "LowerCaseNormalizer"
+         "task": "LowerCaseNormalizerTask"
       },
       {
          "name": "cor_cabelo",
-         "task": "LowerCaseNormalizer"
+         "task": "LowerCaseNormalizerTask"
       },
       {
          "name": "cor_olho",
-         "task": "LowerCaseNormalizer"
+         "task": "LowerCaseNormalizerTask"
       },
       {
          "name": "mais_caracteristicas",
-         "task": "LowerCaseNormalizer"
+         "task": "LowerCaseNormalizerTask"
       },
       {
          "name": "dt_desaparecimento",
-         "task": "LowerCaseNormalizer"
+         "task": "LowerCaseNormalizerTask"
       },
       {
          "name": "local_desaparecimento",
-         "task": "LowerCaseNormalizer"
+         "task": "LowerCaseNormalizerTask"
       },
       {
          "name": "circunstancia_desaparecimento",
-         "task": "LowerCaseNormalizer"
+         "task": "LowerCaseNormalizerTask"
       },
       {
          "name": "dados_adicionais",
-         "task": "LowerCaseNormalizer"
+         "task": "LowerCaseNormalizerTask"
       },
       {
          "name": "situacao",
-         "task": "LowerCaseNormalizer"
+         "task": "LowerCaseNormalizerTask"
       },
       {
          "name": "fonte",
-         "task": "LowerCaseNormalizer"
+         "task": "LowerCaseNormalizerTask"
       }
    ],
    "task": [
       {
          "id": "GenderTask",
-         "do": "IBGELinearRegression",
-         "afterClass" : "LowerCaseNormalizer"
+         "do": "LowerCaseNormalizerTask"
       },
       {
          "id": "AgeTask",
-         "do": "LowerCaseNormalizer"
+         "do": "LowerCaseNormalizerTask"
       },
       {
          "id": "CityTask",
-         "do": "CityPrepareTask",
-         "afterClass" : "DBPediaSpotlightAnnotation"
+         "do": "DBPediaSpotlightAnnotation",
+         "afterClass" : "LowerCaseNormalizerTask"
       },
       {
          "id": "CityPrepareTask",
-         "do": "LowerCaseNormalizer",
-         "afterClass" : "CityCanonicaName"
+         "do": "CityCanonicaName",
+         "afterClass" : "LowerCaseNormalizerTask"
       }
    ],
    "personAttributes": [
       {
-         "name": "name",
+         "name": "nome",
          "tag": "www//xmls.com/foaf/0.1/name"
       },
       {

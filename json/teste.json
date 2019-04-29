@@ -2,13 +2,13 @@
    "name": "Teste",
    "attributes": [
       {
-         "name": "MARIA Julia"
+         "nome": "ANA LUIZA"
       },
       {
          "apelido": "Maju"
       },
       {
-         "dt_nascimento": "28/02/1902"
+         "dt_nascimento": "28/02/2000"
       },
       {
          "sexo": "feminino"
@@ -20,6 +20,12 @@
          "cidade": "Juiz de Fora"
       },
       {
+         "cidade_uri": "Juiz de Fora"
+      },
+      {
+         "estado": "Minas Gerais"
+      },
+      {
          "altura": "1.80"
       },
       {
@@ -29,7 +35,7 @@
          "pele": "negra"
       },
       {
-         "cor_abelo": "castanho"
+         "cor_cabelo": "castanho"
       },
       {
          "cor_olho": "verde"

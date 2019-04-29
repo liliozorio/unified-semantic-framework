@@ -1,35 +1,22 @@
 <?php
 
-namespace model;
-
-$login = "admin:admin"; // login:senha
-$BD = "http://localhost:10035/repositories/desaparecidos6";
 
 class BD
 {
     public function conexao()
     {
         $format = "application/sparql-results+json";
-
         $login = "admin:admin"; // login:senha
-        $BD1 = "http://127.0.0.1:10035/#/repositories/TESTE";
-        $query = '
-                     PREFIX dbpprop:<http://dbpedia.org/property/>
-					 SELECT  ?nome ?apelido ?data_nascimento ?sexo ?imagem ?idade ?cidade ?estado ?altura ?peso ?pele ?cor_cabelo ?cor_olho ?mais_caracteristicas 
-					 ?data_desaparecimento ?local_desaparecimento ?circunstancia_desaparecimento ?data_localizacao ?dados_adicionais ?status ?fonte 
-					 WHERE {
-					 OPTIONAL {?recurso foaf:name ?nome}.
-					 OPTIONAL {?recurso foaf:nick ?apelido}.
-					 OPTIONAL {?recurso foaf:birthday ?data_nascimento}.
-					 OPTIONAL {?recurso foaf:gender ?sexo}.
-					 OPTIONAL {?recurso foaf:img ?imagem}.
-					 OPTIONAL {?recurso foaf:age ?idade}.
-					 OPTIONAL {?recurso dbpprop:height ?altura}.
-					 OPTIONAL {?recurso dbpprop:weight ?peso}.
-					 OPTIONAL {?recurso dbpprop:hairColor ?cor_cabelo}.
-					 OPTIONAL {?recurso dbpprop:eyeColor ?cor_olho}.
-			
-					} ';
+        $BD1 = "http://localhost:10035/repositories/TESTE";
+
+        $query = "# View triples
+                    SELECT ?tenancy ?x{
+                      ?tenancy  <http://www.desaparecidos.com.br/rdf/moreCharacteristics> ?x .
+                      OPTIONAL { ?tenancy <http://www.desaparecidos.com.br/rdf/cityDes> ?o } .
+                      FILTER ( !bound(?o) )
+                    }
+                    
+                    ORDER BY ?tenancy";
 
         $url = urlencode($query);
         $sparqlURL = $BD1 . '?query=' . $url;
@@ -48,7 +35,92 @@ class BD
         curl_close($curl);
 
         $json = json_decode($resposta);
-        var_dump($resposta);
+        var_dump($json);
+
 
     }
+
+    public function insertPessoa($pessoa, $arr_AttributeTag)
+    {
+        $newid = $this->getMaiorIdDesaparecido();
+
+        $format = "application/sparql-results+json";
+        $login = "admin:admin"; // login:senha
+        $BD1 = "http://localhost:10035/repositories/TESTE";
+
+        $prefix = "<http://www.desaparecidos.ufjf.br/desaparecidos/" . $newid . ">";
+        $query = "PREFIX foaf:<http://xmlns.com/foaf/0.1/>
+					 PREFIX des:<http://www.desaparecidos.com.br/rdf/>
+					 PREFIX dbpprop:<http://dbpedia.org/property/> 
+					 INSERT DATA {" . $prefix . " des:id \"" . $newid . "\".
+                                  " . $prefix . " foaf:name \"" . $p->nome . "\".";
+
+
+//        $arr_attribute = array(
+//            'name',
+//            'gender',
+//        );
+
+        $query = $query . $prefix . $arr_AttributeTag[$attribute]."\"" . $pessoa->getNome() . "\".";
+        $query = $query . $prefix . $arr_AttributeTag[$attribute]."\"" . $pessoa->getSexo() . "\".";
+
+
+        $url = urlencode($query);
+
+        $sparqlURL = $BD1. '?query=' . $url . '';
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_USERPWD, $login);
+        curl_setopt($curl, CURLOPT_URL, $sparqlURL);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); //Recebe o output da url como uma string
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array('Accept: ' . $format));
+        $resposta = curl_exec($curl);
+
+        curl_close($curl);
+        echo "resposta insert caso -1: " . $resposta . "<br>";
+    }
+
+    function getMaiorIdDesaparecido()
+    {
+
+
+        $format = "application/sparql-results+json";
+        $login = "admin:admin"; // login:senha
+        $BD1 = "http://localhost:10035/repositories/TESTE";
+
+        $query = "PREFIX foaf:<http://xmlns.com/foaf/0.1/>
+                             PREFIX des:<http://www.desaparecidos.com.br/rdf/>  
+			     PREFIX dbpprop:<http://dbpedia.org/property/>
+                             select ?x where{ ?id des:id ?x} order by desc(xsd:int(?x)) limit 1";
+
+        $url = urlencode($query);
+        $sparqlURL = $BD1 . '?query=' . $url;
+
+        $curl = curl_init();
+
+        curl_setopt($curl, CURLOPT_URL, $sparqlURL);
+
+        curl_setopt($curl, CURLOPT_USERPWD, $login);
+
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array("Accept: " . $format));
+
+        $resposta = curl_exec($curl);
+
+        curl_close($curl);
+
+        $jsonfile = json_decode($resposta);
+        $jsonfile = $jsonfile->results;
+        $jsonfile = $jsonfile->bindings[0];
+        $jsonfile = $jsonfile->x;
+        $jsonfile = $jsonfile->value;
+
+        $id = (int)$jsonfile;
+        return $id;
+
+        //fim da getMaiorID
+    }
+
 }

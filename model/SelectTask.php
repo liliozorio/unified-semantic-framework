@@ -5,27 +5,33 @@ use tasks\CityCanonicaName;
 use tasks\DBPediaSpotlightAnnotation;
 use tasks\IBGELinearRegression;
 use tasks\LowerCaseNormalizerTask;
+use ReflectionClass;
 
 class SelectTask
 {
-    /** array com as task que devem ser chamadas para cada atributo
-     * o array se encontra no formato
+    /**
      * [attribute] => task
      */
     protected $arr_AttributeTask;
 
-    /** array com as configurações das CompoundTask
-     * o array se encontra no formato
+    /**
      * [attribute] => [do] => task que deve se assionada
      *                [afterClass] => proxima task que deve ser assionada
      * pode haver casos onde o campo 'afterClass' é igual a null
      */
     protected $arr_TaskConfig;
 
+    /**
+     * [] => NameTask
+     */
+    protected $arr_Task;
+
+
     function __construct($jsonConfig)
     {
         $this->initArrayTaskConfig($jsonConfig);
         $this->initArrayAttributeTask($jsonConfig);
+        $this->initArrayTask();
         //$this->printArray();
     }
 
@@ -39,24 +45,15 @@ class SelectTask
     }
 
     public function getTaskAttribute($selectedTask){
+        if(in_array($selectedTask,$this->arr_Task)) {
+            try {
+                $task = new ReflectionClass('tasks\\'.$selectedTask);
+                $task = $task->newInstance();
+            } catch (\ReflectionException $e) {
+                echo("Erro: ". $e->getMessage());
+            }
 
-        if ( $selectedTask == 'LowerCaseNormalizer') {
-            $task = new LowerCaseNormalizerTask();
-        }
-
-        elseif ($selectedTask == 'DBPediaSpotlightAnnotation'){
-            $task = new DBPediaSpotlightAnnotation();
-        }
-
-        elseif ($selectedTask == 'CityCanonicaName'){
-            $task = new CityCanonicaName();
-        }
-
-        elseif ($selectedTask == 'IBGELinearRegression'){
-            $task = new IBGELinearRegression();
-        }
-
-        else{
+        }else {
             $task = $this->getCompoundTask($selectedTask);
         }
 
@@ -89,6 +86,18 @@ class SelectTask
         }
     }
 
+
+    public function initArrayTask(){
+        $this->arr_Task = array(
+            'CityCanonicaName',
+            'DBPediaSpotlightAnnotation',
+            'IBGELinearRegression',
+            'LowerCaseNormalizerTask',
+            'AgeTask',
+            'GetDtNascimentoByIdade',
+        );
+    }
+
     public function printArray(){
         echo "<b>arr_Taskconfig</b><br>";
         foreach ($this->arr_TaskConfig as $task => $taskConfig){
@@ -103,6 +112,15 @@ class SelectTask
         foreach ($this->arr_AttributeTask as $attribute => $task){
             echo "[".$attribute."] =>".$task."<br>";
         }
+
+        echo"<br><br>";
+
+        echo "<b>arr_Task</b><br>";
+        foreach ($this->arr_Task as $attribute => $task){
+            echo "[".$attribute."] =>".$task."<br>";
+        }
+
+        echo "<br><br>";
     }
 
 }
