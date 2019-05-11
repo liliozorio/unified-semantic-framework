@@ -1,6 +1,6 @@
 <?php
 require __DIR__ . '/../model/Pessoa.php';
-require __DIR__ . '/../model/BD.php';
+require __DIR__ . '/../model/Allegrograph.php';
 require __DIR__ . '/../model/SelectTask.php';
 require __DIR__ . '/../tasks/LowerCaseNormalizerTask.php';
 require __DIR__ . '/../tasks/IBGELinearRegression.php';
@@ -12,6 +12,9 @@ require __DIR__ . '/../tasks/AgeTask.php';
 
 use model\Pessoa;
 use model\SelectTask;
+use tasks\AgeTask;
+use tasks\IBGELinearRegression;
+use model\Allegrograph;
 
 class DefaultController
 {
@@ -26,27 +29,32 @@ class DefaultController
         $arquivoConfig = file_get_contents(__DIR__ . '/../json/config.json');
         $jsonConfig = json_decode($arquivoConfig);
 
-        $selectTask = new \model\SelectTask($jsonConfig);
+        $selectTask = new SelectTask($jsonConfig);
+        $bd = new Allegrograph();
+
 
         $pessoa = $this->criaPessoa($selectTask);
 
         if($pessoa->getAttribute('idade') == null && $pessoa->getAttribute('dt_nascimento') != null){
-            $ageTask = new \tasks\AgeTask();
+            $ageTask = new AgeTask();
             $idade = $ageTask->getIdadeByDtNascimento($pessoa->getAttribute('dt_nascimento'));
             $pessoa->setAttribute('idade',$idade);
         }
 
         if($pessoa->getAttribute('dt_nascimento') == null && $pessoa->getAttribute('idade') != null){
-            $ageTask = new \tasks\AgeTask();
+            $ageTask = new AgeTask();
             $dt_nascimento = $ageTask->getDtNascimentoByIdade($pessoa->getAttribute('idade'));
             $pessoa->setAttribute('dt_nascimento',$dt_nascimento);
         }
 
         if($pessoa->getAttribute('sexo') == null && $pessoa->getAttribute('nome') != null){
-            $IBGELinearRegression = new \tasks\IBGELinearRegression();
+            $IBGELinearRegression = new IBGELinearRegression();
             $sexo = $IBGELinearRegression->processing($pessoa->getAttribute('nome'));
             $pessoa->setAttribute('sexo',$sexo);
         }
+
+        $bd->insertPessoa($pessoa);
+        die('');
 
         $pessoa->printPessoa();
     }

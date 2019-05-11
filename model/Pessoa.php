@@ -25,6 +25,7 @@ class Pessoa
     private $dados_adicionais;
     private $situacao;
     private $fonte;
+    private $data_localizacao;
 
     private $arr_attributes = array(
         'nome',
@@ -44,6 +45,7 @@ class Pessoa
         'mais_caracteristicas',
         'dt_desaparecimento',
         'local_desaparecimento',
+        'data_localizacao',
         'circunstancia_desaparecimento',
         'dados_adicionais',
         'situacao',
@@ -66,26 +68,5 @@ class Pessoa
             echo "<b>" . $attribute . ":</b> " . $this->getAttribute($attribute) . "<br>";
         }
         echo "<br><br>";
-    }
-
-    public function exportPessoaToTxt($fileTxt)
-    {
-        $objData = serialize($this);
-        $file = fopen($fileTxt, "w");
-        fwrite($file, $objData);
-        fclose($file);
-
-    }
-
-    public function importPessoaToTxt($fileTxt)
-    {
-        $objData = file_get_contents($fileTxt);
-        $obj = unserialize($objData);
-
-        if (!empty($obj)) {
-            foreach ($this->arr_attributes as $attribute){
-                $this->setAttribute($attribute, $obj->$attribute);
-            }
-        }
     }
 }
