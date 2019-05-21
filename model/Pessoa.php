@@ -26,6 +26,7 @@ class Pessoa
     private $situacao;
     private $fonte;
     private $data_localizacao;
+    private $boletimDeOcorrecia;
 
     private $arr_attributes = array(
         'nome',
@@ -49,6 +50,7 @@ class Pessoa
         'circunstancia_desaparecimento',
         'dados_adicionais',
         'situacao',
+        'boletimDeOcorrecia',
         'fonte');
 
 

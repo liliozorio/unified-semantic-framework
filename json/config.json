@@ -83,7 +83,19 @@
       },
       {
          "name": "fonte",
-         "task": "LowerCaseNormalizerTask"
+         "task": "ReturnAttributeTask"
+      },
+      {
+         "name": "boletimDeOcorrecia",
+         "task": "ReturnAttributeTask"
+      },
+      {
+         "name": "data_localizacao",
+         "task": "ReturnAttributeTask"
+      },
+      {
+         "name": "dt_desaparecimento",
+         "task": "ReturnAttributeTask"
       }
    ],
    "task": [

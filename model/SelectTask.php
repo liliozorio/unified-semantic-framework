@@ -5,6 +5,7 @@ use tasks\CityCanonicaName;
 use tasks\DBPediaSpotlightAnnotation;
 use tasks\IBGELinearRegression;
 use tasks\LowerCaseNormalizerTask;
+use tasks\ReturnAttributeTask;
 use ReflectionClass;
 
 class SelectTask
@@ -95,6 +96,8 @@ class SelectTask
             'LowerCaseNormalizerTask',
             'AgeTask',
             'GetDtNascimentoByIdade',
+            'ReturnAttributeTask',
+            'CityPrepareTask',
         );
     }
 

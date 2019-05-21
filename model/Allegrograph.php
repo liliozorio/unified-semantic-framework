@@ -8,7 +8,6 @@ class Allegrograph implements Export_Import
 {
     public function exportPessoa($pessoa)
     {
-        //Select pessoa e
     }
 
     public function importPessoa($pessoa)
@@ -16,35 +15,6 @@ class Allegrograph implements Export_Import
         $this->insertPessoa($pessoa);
     }
 
-    public function select()
-    {
-        $format = "application/sparql-results+json";
-        $login = "admin:admin"; // login:senha
-        $BD1 = "http://localhost:10035/repositories/TESTE";
-
-        $query = "# View triples
-                    SELECT ?tenancy ?x{
-                      ?tenancy  <http://www.desaparecidos.com.br/rdf/moreCharacteristics> ?x .
-                      OPTIONAL { ?tenancy <http://www.desaparecidos.com.br/rdf/cityDes> ?o } .
-                      FILTER ( !bound(?o) )
-                    }
-                    
-                    ORDER BY ?tenancy";
-
-        $url = urlencode($query);
-        $sparqlURL = $BD1 . '?query=' . $url;
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $sparqlURL);
-        curl_setopt($curl, CURLOPT_USERPWD, $login);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); //Recebe o output da url como uma string
-
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array("Accept: " . $format));
-        $resposta = curl_exec($curl);
-        curl_close($curl);
-
-        $json = json_decode($resposta);
-        var_dump($json);
-    }
 
     public function insertPessoa($pessoa)
     {
@@ -83,7 +53,7 @@ class Allegrograph implements Export_Import
         $endereco = $endereco . $prefix . " des:source \"" . $pessoa->getAttribute('fonte') . "\". }";
 
         $url = urlencode($endereco);
-        $sparqlURL = 'http://localhost:10035/repositories/TESTE2?query=' . $url . '';
+        $sparqlURL = 'http://localhost:10035/repositories/Teste_Insert?query=' . $url . '';
 
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_USERPWD, $login);
@@ -101,7 +71,7 @@ class Allegrograph implements Export_Import
     {
         $format = "application/sparql-results+json";
         $login = "admin:admin"; // login:senha
-        $BD1 = "http://localhost:10035/repositories/TESTE";
+        $BD = "http://localhost:10035/repositories/Teste_Insert";
 
         $query = "PREFIX foaf:<http://xmlns.com/foaf/0.1/>
                              PREFIX des:<http://www.desaparecidos.com.br/rdf/>  
@@ -109,16 +79,13 @@ class Allegrograph implements Export_Import
                              select ?x where{ ?id des:id ?x} order by desc(xsd:int(?x)) limit 1";
 
         $url = urlencode($query);
-        $sparqlURL = $BD1 . '?query=' . $url;
+        $sparqlURL = $BD . '?query=' . $url;
 
         $curl = curl_init();
 
         curl_setopt($curl, CURLOPT_URL, $sparqlURL);
-
         curl_setopt($curl, CURLOPT_USERPWD, $login);
-
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-
         curl_setopt($curl, CURLOPT_HTTPHEADER, array("Accept: " . $format));
 
         $resposta = curl_exec($curl);
