@@ -110,13 +110,4 @@ class PoliciaMilitarSC implements Scraping
         //close the file
         fclose($handle);
     }
-
-
-    public function printArray($array)
-    {
-        print "<pre>";
-        print_r($array);
-        print "<pre>";
-        die();
-    }
 }

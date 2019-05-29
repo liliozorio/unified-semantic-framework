@@ -91,7 +91,6 @@ class DefaultController
         }
 
         $bd->insertPessoa($pessoa);
-        $pessoa->printPessoa();
     }
 
     public function scraping($arr_arquivoScraping){
@@ -100,5 +99,4 @@ class DefaultController
             $scrapingClass->scraping();
         }
     }
-
 }

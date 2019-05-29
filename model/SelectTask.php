@@ -33,7 +33,6 @@ class SelectTask
         $this->initArrayTaskConfig($jsonConfig);
         $this->initArrayAttributeTask($jsonConfig);
         $this->initArrayTask();
-        //$this->printArray();
     }
 
     public function getAttributeProcessed($valueAttribute, $attribute)

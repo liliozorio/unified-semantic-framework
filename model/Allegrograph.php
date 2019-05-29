@@ -8,6 +8,7 @@ class Allegrograph implements Export_Import
 {
     public function exportPessoa($pessoa)
     {
+
     }
 
     public function importPessoa($pessoa)
@@ -84,8 +85,8 @@ class Allegrograph implements Export_Import
         $curl = curl_init();
 
         curl_setopt($curl, CURLOPT_URL, $sparqlURL);
-        curl_setopt($curl, CURLOPT_USERPWD, $login);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_USERPWD, $login);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array("Accept: " . $format));
 
         $resposta = curl_exec($curl);
@@ -94,6 +95,10 @@ class Allegrograph implements Export_Import
 
         $jsonfile = json_decode($resposta);
         $jsonfile = $jsonfile->results;
+
+        if(empty($jsonfile->bindings))
+            return 1;
+
         $jsonfile = $jsonfile->bindings[0];
         $jsonfile = $jsonfile->x;
         $jsonfile = $jsonfile->value;
