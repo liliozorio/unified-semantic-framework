@@ -1,5 +1,5 @@
 <?php
-namespace model;
+namespace export_import;
 
 require_once 'Export_Import.php';
 

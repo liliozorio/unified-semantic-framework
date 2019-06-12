@@ -1,12 +1,19 @@
 <?php
 
-namespace tasks;
-require_once 'Task.php';
+namespace method;
+require_once 'Method.php';
 
-class IBGELinearRegression implements Task
+class IBGELinearRegressionMethod implements \Method
 {
-    public function processing($nome)
+    public function executeMethod($pessoa)
     {
+        if ($pessoa->getAttribute('nome') == null ||
+            ($pessoa->getAttribute('sexo') != null && $pessoa->getAttribute('nome') != null)
+        ) {
+            return;
+        }
+
+        $nome = $pessoa->getAttribute('nome');
         $nome = explode(" ", $nome);
 
         $curl = curl_init();
@@ -20,8 +27,8 @@ class IBGELinearRegression implements Task
         $frequenciaFeminino = 0;
         $arr_resposta = json_decode($resposta, true);
 
-           if(!empty($arr_resposta)){
-            foreach ($arr_resposta[0]['res'] as $frequenciaByAno){
+        if (!empty($arr_resposta)) {
+            foreach ($arr_resposta[0]['res'] as $frequenciaByAno) {
                 $frequenciaFeminino += $frequenciaByAno['frequencia'];
             }
         }
@@ -36,20 +43,20 @@ class IBGELinearRegression implements Task
 
         $frequenciaMasculina = 0;
         $arr_resposta = json_decode($resposta, true);
-        if(!empty($arr_resposta)) {
+        if (!empty($arr_resposta)) {
             foreach ($arr_resposta[0]['res'] as $frequenciaByAno) {
                 $frequenciaMasculina += $frequenciaByAno['frequencia'];
             }
         }
 
-        if($frequenciaFeminino > $frequenciaMasculina){
-            return 'feminino';
+        if ($frequenciaFeminino > $frequenciaMasculina) {
+            $sexo = 'feminino';
         }
 
-        if($frequenciaMasculina > $frequenciaFeminino){
-            return 'masculino';
+        if ($frequenciaMasculina > $frequenciaFeminino) {
+            $sexo = 'masculino';
         }
 
-        return null;
+        $pessoa->setAttribute('sexo', $sexo);
     }
 }

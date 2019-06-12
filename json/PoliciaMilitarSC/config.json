@@ -1,5 +1,5 @@
 {
-   "name": "Teste",
+   "name": "PoliciaMilitarSC",
    "attributes": [
       {
          "name": "nome",
@@ -118,14 +118,15 @@
          "afterClass" : "LowerCaseNormalizerTask"
       }
    ],
-   "personAttributes": [
+   "methods": [
       {
-         "name": "nome",
-         "tag": "www//xmls.com/foaf/0.1/name"
+         "name": "GetIdadeByDtNascimentoMethod"
       },
       {
-         "name": "gender",
-         "tag": "www//xmls.com/foaf/0.1/gender"
+         "name": "GetDtNascimentoByIdadeMethod"
+      },
+      {
+         "name": "IBGELinearRegressionMethod"
       }
    ]
 }

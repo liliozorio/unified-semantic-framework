@@ -1,6 +1,6 @@
 <?php
 
-namespace model;
+namespace export_import;
 
 require_once 'Export_Import.php';
 
@@ -65,7 +65,6 @@ class Allegrograph implements Export_Import
         $resposta = curl_exec($curl);
 
         curl_close($curl);
-        echo $resposta . "<br>";
     }
 
     function getMaiorIdDesaparecido()

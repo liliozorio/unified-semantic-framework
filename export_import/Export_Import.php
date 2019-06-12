@@ -1,6 +1,6 @@
 <?php
 
-namespace model;
+namespace export_import;
 
 
 interface Export_Import

@@ -3,8 +3,10 @@
 namespace model;
 
 use ReflectionClass;
+use Thread;
 use scraping\PoliciaCivilGO;
 use scraping\PoliciaMilitarSC;
+
 
 class ScrapingModel
 {
@@ -12,13 +14,17 @@ class ScrapingModel
 
     function __construct($scrapingClass)
     {
-
         try {
             $this->scrapingClass = new ReflectionClass('scraping\\'.$scrapingClass);
             $this->scrapingClass = $this->scrapingClass->newInstance();
         } catch (\ReflectionException $e) {
             echo("<b>Erro:</b> ". $e->getMessage());
         }
+    }
+
+    function run()
+    {
+       $this->scraping();
     }
 
     function scraping(){

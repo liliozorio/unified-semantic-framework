@@ -29,8 +29,6 @@ class PoliciaMilitarSC implements Scraping
             $htmlPagina = file_get_html($urlBase . $i);
 
             foreach ($htmlPagina->find('div[class="item"]') as $item) {
-                $cont++;
-
                 $img = $item->find('img[width="75px"]');
                 if (isset($img[0])) {
                     $this->imagem = "http://www.pm.sc.gov.br" . $img[0]->src;
@@ -44,6 +42,7 @@ class PoliciaMilitarSC implements Scraping
                 }
                 $name = $name = 'PoliciaMilitarSC_'.$cont.'.json';
                 $this->geraJson($name);
+                $cont++;
             }
         }
         echo "<h4>Scraping Realizado</h4>";
