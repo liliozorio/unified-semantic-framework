@@ -109,12 +109,12 @@
       },
       {
          "id": "CityTask",
-         "do": "DBPediaSpotlightAnnotation",
+         "do": "DBPediaSpotlightAnnotationTask",
          "afterClass" : "LowerCaseNormalizerTask"
       },
       {
          "id": "CityPrepareTask",
-         "do": "CityCanonicaName",
+         "do": "CityCanonicaNameTask",
          "afterClass" : "LowerCaseNormalizerTask"
       }
    ],

@@ -2,14 +2,7 @@
 
 namespace model;
 
-use model\MethodModel;
-use tasks\CityCanonicaName;
-use tasks\DBPediaSpotlightAnnotation;
-use tasks\IBGELinearRegressionMethod;
-use tasks\LowerCaseNormalizerTask;
-use tasks\ReturnAttributeTask;
 use ReflectionClass;
-use tasks\Task;
 
 class SelectTask
 {
@@ -85,7 +78,6 @@ class SelectTask
     {
         foreach ($this->arr_Methods as $method) {
             $methodClass = new MethodModel($method);
-            //thread
             $methodClass->executeMethod($pessoa);
         }
     }
@@ -118,14 +110,25 @@ class SelectTask
     public function initArrayTask()
     {
         $this->arr_Task = array(
-            'CityCanonicaName',
-            'DBPediaSpotlightAnnotation',
+            'CityCanonicaNameTask',
+            'DBPediaSpotlightAnnotationTask',
             'LowerCaseNormalizerTask',
             'AgeTask',
-            'GetDtNascimentoByIdade',
             'ReturnAttributeTask',
             'CityPrepareTask',
+            'CityTask',
+            'GenderTask',
         );
+    }
+
+    public function getArrMethods()
+    {
+       return $this->arr_Methods;
+    }
+
+    public function getArrTasks()
+    {
+        return $this->arr_Task;
     }
 
     public function printArray()

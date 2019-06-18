@@ -1,7 +1,7 @@
 <?php
 
 namespace tasks;
-
+require_once __DIR__.'/../tasks/Task.php';
 use model\SelectTask;
 
 class CompoundTask implements Task

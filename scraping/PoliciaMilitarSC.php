@@ -4,7 +4,7 @@ namespace scraping;
 
 require_once __DIR__ . '/../simplehtmldom_1_8_1/simple_html_dom.php';
 
-require_once 'Scraping.php';
+require_once __DIR__.'/../Controller/../scraping/Scraping.php';
 
 class PoliciaMilitarSC implements Scraping
 {

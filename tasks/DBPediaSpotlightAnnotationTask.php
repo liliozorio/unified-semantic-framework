@@ -1,10 +1,9 @@
 <?php
 
 namespace tasks;
+require_once __DIR__.'/../tasks/Task.php';
 
-require_once 'Task.php';
-
-class DBPediaSpotlightAnnotation implements Task
+class DBPediaSpotlightAnnotationTask implements Task
 {
     public function processing($attribute)
     {
@@ -21,14 +20,9 @@ class DBPediaSpotlightAnnotation implements Task
         curl_setopt($curl, CURLOPT_POSTFIELDS, $endereco);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array('Accept: ' . $format));
+
         $resposta = curl_exec($curl);
-
-
-        //SSL certificate problem: certificate has expired
-        //$error_message = curl_error($errno);
-
         curl_close($curl);
-
 
         if (isset(json_decode($resposta, true)["Resources"])) {
             foreach (json_decode($resposta, true)["Resources"] as $type) {

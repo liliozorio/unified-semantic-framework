@@ -1,8 +1,7 @@
 <?php
 
 namespace export_import;
-
-require_once 'Export_Import.php';
+require_once __DIR__.'/../export_import/Export_Import.php';
 
 class Allegrograph implements Export_Import
 {
@@ -62,7 +61,7 @@ class Allegrograph implements Export_Import
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array('Accept: ' . $format));
-        $resposta = curl_exec($curl);
+        curl_exec($curl);
 
         curl_close($curl);
     }

@@ -1,8 +1,7 @@
 <?php
 
 namespace tasks;
-
-require_once 'Task.php';
+require_once __DIR__.'/../tasks/Task.php';
 
 class LowerCaseNormalizerTask implements Task
 {

@@ -1,9 +1,9 @@
 <?php
 
 namespace tasks;
-require_once 'Task.php';
+require_once __DIR__.'/../tasks/Task.php';
 
-class CityCanonicaName implements Task
+class CityCanonicaNameTask implements Task
 {
     public function processing($cidade)
     {
@@ -21,10 +21,6 @@ class CityCanonicaName implements Task
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array('Accept: ' . $format));
         $resposta = curl_exec($curl);
-
-
-        //SSL certificate problem: certificate has expired
-        //$error_message = curl_error($errno);
 
         curl_close($curl);
 
