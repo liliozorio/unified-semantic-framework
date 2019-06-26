@@ -5,54 +5,54 @@ require_once __DIR__.'/../export_import/Export_Import.php';
 
 class Allegrograph implements Export_Import
 {
-    public function exportPessoa($pessoa)
+    public function export($person)
     {
 
     }
 
-    public function importPessoa($pessoa)
+    public function import($person)
     {
-        $this->insertPessoa($pessoa);
+        $this->insertPerson($person);
     }
 
 
-    public function insertPessoa($pessoa)
+    public function insertPerson($person)
     {
-        $Newid = $this->getMaiorIdDesaparecido();
+        $Newid = $this->gethigherIdDesaparecido();
         $Newid++;
 
         $login = "admin:admin";
         $format = "application/sparql-results+json";
 
         $prefix = "<http://www.desaparecidos.ufjf.br/desaparecidos/" . $Newid . ">";
-        $endereco = "PREFIX foaf:<http://xmlns.com/foaf/0.1/>
+        $address = "PREFIX foaf:<http://xmlns.com/foaf/0.1/>
 					 PREFIX des:<http://www.desaparecidos.com.br/rdf/>
 					 PREFIX dbpprop:<http://dbpedia.org/property/> 
 					 INSERT DATA {" . $prefix . " des:id \"" . $Newid . "\".
-                                  " . $prefix . " foaf:name \"" . $pessoa->getAttribute('nome') . "\".";
+                                  " . $prefix . " foaf:name \"" . $person->getAttribute('nome') . "\".";
 
-        $endereco = $endereco . $prefix . " foaf:nick \"" . $pessoa->getAttribute('apelido') . "\".";
-        $endereco = $endereco . $prefix . " foaf:birthday \"" . $pessoa->getAttribute('dt_nascimento') . "\".";
-        $endereco = $endereco . $prefix . " foaf:gender \"" . $pessoa->getAttribute('sexo') . "\".";
-        $endereco = $endereco . $prefix . " foaf:img \"" . $pessoa->getAttribute('imagem'). "\".";
-        $endereco = $endereco . $prefix . " foaf:age \"" . $pessoa->getAttribute('idade') . "\".";
-        $endereco = $endereco . $prefix . " des:cityDes \"" . $pessoa->getAttribute('cidade') . "\".";
-        $endereco = $endereco . $prefix . " des:stateDes \"" . $pessoa->getAttribute('estado') . "\".";
-        $endereco = $endereco . $prefix . " dbpprop:height \"" . $pessoa->getAttribute('altura') . "\".";
-        $endereco = $endereco . $prefix . " dbpprop:weight \"" . $pessoa->getAttribute('peso') . "\".";
-        $endereco = $endereco . $prefix . " des:skin \"" . $pessoa->getAttribute('pele') . "\".";
-        $endereco = $endereco . $prefix . " dbpprop:hairColor \"" . $pessoa->getAttribute('cor_cabelo') . "\".";
-        $endereco = $endereco . $prefix . " dbpprop:eyeColor \"" . $pessoa->getAttribute('cor_olho') . "\".";
-        $endereco = $endereco . $prefix . " des:moreCharacteristics \"" . $pessoa->getAttribute('mais_caracteristicas') . "\".";
-        $endereco = $endereco . $prefix . " des:disappearanceDate \"" . $pessoa->getAttribute('dt_desaparecimento') . "\".";
-        $endereco = $endereco . $prefix . " des:disappearancePlace \"" . $pessoa->getAttribute('local_desaparecimento') . "\".";
-        $endereco = $endereco . $prefix . " des:circumstanceLocation \"" . $pessoa->getAttribute('circunstancia_desaparecimento') . "\".";
-        $endereco = $endereco . $prefix . " des:dateLocation \"" . $pessoa->getAttribute('data_localizacao') . "\".";
-        $endereco = $endereco . $prefix . " des:additionalData \"" . $pessoa->getAttribute('dados_adicionais') . "\".";
-        $endereco = $endereco . $prefix . " des:status \"" . $pessoa->getAttribute('situacao') . "\".";
-        $endereco = $endereco . $prefix . " des:source \"" . $pessoa->getAttribute('fonte') . "\". }";
+        $address = $address . $prefix . " foaf:nick \"" . $person->getAttribute('apelido') . "\".";
+        $address = $address . $prefix . " foaf:birthday \"" . $person->getAttribute('dt_nascimento') . "\".";
+        $address = $address . $prefix . " foaf:gender \"" . $person->getAttribute('sexo') . "\".";
+        $address = $address . $prefix . " foaf:img \"" . $person->getAttribute('imagem'). "\".";
+        $address = $address . $prefix . " foaf:age \"" . $person->getAttribute('idade') . "\".";
+        $address = $address . $prefix . " des:cityDes \"" . $person->getAttribute('cidade') . "\".";
+        $address = $address . $prefix . " des:stateDes \"" . $person->getAttribute('estado') . "\".";
+        $address = $address . $prefix . " dbpprop:height \"" . $person->getAttribute('altura') . "\".";
+        $address = $address . $prefix . " dbpprop:weight \"" . $person->getAttribute('peso') . "\".";
+        $address = $address . $prefix . " des:skin \"" . $person->getAttribute('pele') . "\".";
+        $address = $address . $prefix . " dbpprop:hairColor \"" . $person->getAttribute('cor_cabelo') . "\".";
+        $address = $address . $prefix . " dbpprop:eyeColor \"" . $person->getAttribute('cor_olho') . "\".";
+        $address = $address . $prefix . " des:moreCharacteristics \"" . $person->getAttribute('mais_caracteristicas') . "\".";
+        $address = $address . $prefix . " des:disappearanceDate \"" . $person->getAttribute('dt_desaparecimento') . "\".";
+        $address = $address . $prefix . " des:disappearancePlace \"" . $person->getAttribute('local_desaparecimento') . "\".";
+        $address = $address . $prefix . " des:circumstanceLocation \"" . $person->getAttribute('circunstancia_desaparecimento') . "\".";
+        $address = $address . $prefix . " des:dateLocation \"" . $person->getAttribute('data_localizacao') . "\".";
+        $address = $address . $prefix . " des:additionalData \"" . $person->getAttribute('dados_adicionais') . "\".";
+        $address = $address . $prefix . " des:status \"" . $person->getAttribute('situacao') . "\".";
+        $address = $address . $prefix . " des:source \"" . $person->getAttribute('fonte') . "\". }";
 
-        $url = urlencode($endereco);
+        $url = urlencode($address);
         $sparqlURL = 'http://localhost:10035/repositories/Teste_Insert?query=' . $url . '';
 
         $curl = curl_init();
@@ -66,7 +66,7 @@ class Allegrograph implements Export_Import
         curl_close($curl);
     }
 
-    function getMaiorIdDesaparecido()
+    function gethigherIdDesaparecido()
     {
         $format = "application/sparql-results+json";
         $login = "admin:admin"; // login:senha

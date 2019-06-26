@@ -1,11 +1,11 @@
 <?php
-require __DIR__ . '/../model/Pessoa.php';
+require __DIR__ . '/../model/Person.php';
 require __DIR__ . '/../model/SelectTask.php';
 require __DIR__ . '/../model/ScrapingModel.php';
 require __DIR__ . '/../model/MethodModel.php';
 require __DIR__ . '/../tasks/CompoundTask.php';
 
-use model\Pessoa;
+use model\Person;
 use model\SelectTask;
 use model\ScrapingModel;
 
@@ -19,46 +19,47 @@ class Controller
     public function index()
     {
         $arr_scraping = array();
-        $arquivo = fopen('scraping.txt', 'r');
-        while (!feof($arquivo)) {
-            $linha = fgets($arquivo, 1024);
-            $scraping = explode("\n",$linha)[0];
+        $archive = fopen('scraping.txt', 'r');
+        while (!feof($archive)) {
+            $row = fgets($archive, 1024);
+            $scraping = explode("\n",$row)[0];
             $arr_scraping[] = $scraping;
             eval('?>' . file_get_contents( __DIR__ . '/../scraping/'.$scraping.'.php'));
         }
-        fclose($arquivo);
+        fclose($archive);
         $this->scraping($arr_scraping);
-        $this->createPessoas($arr_scraping);
+        $this->createPeople($arr_scraping);
     }
 
-    public function scraping($arr_arquivoScraping)
+    public function scraping($arr_archiveScraping)
     {
-        foreach ($arr_arquivoScraping as $arquivoScraping) {
-            $scrapingClass = new ScrapingModel($arquivoScraping);
+        foreach ($arr_archiveScraping as $archiveScraping) {
+            $scrapingClass = new ScrapingModel($archiveScraping);
             $scrapingClass->scraping();
         }
     }
 
-    public function createPessoas($arr_scraping)
+    public function createPeople($arr_scraping)
     {
         foreach ($arr_scraping as $scraping) {
-            echo '<h4>Scraping: '.$scraping.'</h4>';
+            echo '<h4>Create People: '.$scraping.'</h4>';
             /** aquivo json com as configurações de tarefas e vocabulario dos atributos coletados*/
-            $arquivoConfig = file_get_contents(__DIR__ . '/../json/' . $scraping . '/config.json');
-            $jsonConfig = json_decode($arquivoConfig);
+            $archiveConfig = file_get_contents(__DIR__ . '/../json/' . $scraping . '/config.json');
+            $jsonConfig = json_decode($archiveConfig);
             $selectTask = new SelectTask($jsonConfig);
             $this->includeTasksMethods($selectTask);
+            $counter = 0;
 
             $pasta = __DIR__ . '/../json/' . $scraping . '/';
-            $arquivos = glob("$pasta{*.json}", GLOB_BRACE);
-            $numPessoas = count($arquivos);
-	    $contador = 0;
-            while ($contador < $numPessoas - 1) {
+            $archives = glob("$pasta{*.json}", GLOB_BRACE);
+            $numPeople = count($archives);
+
+            while ($counter < $numPeople - 1) {
                 /** aquivos json com dos atributos coletados*/
-                $arquivoScraping = file_get_contents(__DIR__ . '/../json/' . $scraping . '/' . $scraping . '_' . $contador . '.json');
-                $jsonScraping = json_decode($arquivoScraping);
+                $archiveScraping = file_get_contents(__DIR__ . '/../json/' . $scraping . '/' . $scraping . '_' . $counter . '.json');
+                $jsonScraping = json_decode($archiveScraping);
                 $this->executeTasks($selectTask, $jsonScraping);
-                $contador++;
+                $counter++;
             }
         }
     }
@@ -77,30 +78,30 @@ class Controller
 
     public function executeTasks($selectTask, $jsonScraping)
     {
-        $pessoa = new Pessoa();
+        $person = new Person();
         foreach ($jsonScraping->attributes as $objAttribute) {
             foreach ($objAttribute as $attribute => $valueAttribute) {
                 $attributeProcessed = $selectTask->getAttributeProcessed($valueAttribute, $attribute);
-                $pessoa->setAttribute($attribute, $attributeProcessed);
+                $person->setAttribute($attribute, $attributeProcessed);
             }
         }
 
-        $selectTask->executeMethods($pessoa);
+        $selectTask->executeMethods($person);
 
-        $this->insertPessoa($pessoa);
+        $this->insertPerson($person);
     }
 
-    public function insertPessoa($pessoa)
+    public function insertPerson($person)
     {
         $arr_exportClass = array();
-        $arquivo = fopen('export.txt', 'r');
-        while (!feof($arquivo)) {
-            $linha = fgets($arquivo, 1024);
-            $exportClass = explode("\n",$linha)[0];
+        $archive = fopen('export.txt', 'r');
+        while (!feof($archive)) {
+            $row = fgets($archive, 1024);
+            $exportClass = explode("\n",$row)[0];
             $arr_exportClass[] = $exportClass;
             require_once( __DIR__ . '/../export_import/'.$exportClass.'.php');
         }
-        fclose($arquivo);
+        fclose($archive);
 
         foreach ($arr_exportClass as $exportClass){
             try {
@@ -110,7 +111,7 @@ class Controller
                 echo("<b>Erro:</b> ". $e->getMessage());
             }
 
-            $bd->importPessoa($pessoa);
+            $bd->import($person);
         }
     }
 

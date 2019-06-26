@@ -34,19 +34,19 @@ class PoliciaCivilGO implements Scraping
 
             $divDesaparecido = str_get_html($divDesaparecido);
             $linkDesaparecido = $divDesaparecido->find('a[rel="bookmark"]')[0];
-            $paginaDesaparecido = file_get_html($linkDesaparecido->href);
+            $pageDesaparecido = file_get_html($linkDesaparecido->href);
 
-            $img = $paginaDesaparecido->find('a img');
+            $img = $pageDesaparecido->find('a img');
             if (isset($img[8])) {
                 $this->imagem = trim($img[8]->src);
             }
 
             $this->situacao = "desaparecida";
             $this->fonte = $linkDesaparecido->href;
-            $auxNome = $paginaDesaparecido->find('h1[class="entry-title"]');
+            $auxNome = $pageDesaparecido->find('h1[class="entry-title"]');
             $this->nome = html_entity_decode(trim($auxNome[0]->plaintext));
 
-            $divDadosDesaparecido = $paginaDesaparecido->find('div[class="td-post-content"]');
+            $divDadosDesaparecido = $pageDesaparecido->find('div[class="td-post-content"]');
             $divDadosDesaparecido = str_get_html($divDadosDesaparecido[0]);
             $pDadosDesaparecido = $divDadosDesaparecido->find('p');
 
@@ -54,48 +54,48 @@ class PoliciaCivilGO implements Scraping
             if (!empty($pDadosDesaparecido)) {
                 $dados = $pDadosDesaparecido[0]->plaintext;
                 $dados = explode("\n", $dados);
-                $this->getInformacoesDesaparecidos($dados);
+                $this->getInformationDesaparecidos($dados);
             }
             $this->cont = $cont;
-            $this->geraJson();
+            $this->generateJson();
             $cont++;
         }
         echo "<h4>Scraping Realizado</h4>";
     }
 
-    public function getInformacoesDesaparecidos($dados){
+    public function getInformationDesaparecidos($dados){
         foreach ($dados as $arr_informacoes) {
-            $informacao = explode(":", $arr_informacoes);
+            $information = explode(":", $arr_informacoes);
 
-            if (strtolower($informacao[0]) == "sexo") {
-                $this->sexo = $informacao[1];
+            if (strtolower($information[0]) == "sexo") {
+                $this->sexo = $information[1];
             }
 
-            if (strtolower($informacao[0]) == "data de nascimento") {
-                $this->dt_nascimento = $informacao[1];
+            if (strtolower($information[0]) == "data de nascimento") {
+                $this->dt_nascimento = $information[1];
             }
 
-            if (strtolower($informacao[0]) == "data do desaparecimento") {
-                $this->dt_desaparecimento = $informacao[1];
+            if (strtolower($information[0]) == "data do desaparecimento") {
+                $this->dt_desaparecimento = $information[1];
             }
 
-            if (strtolower($informacao[0]) == "data do registro") {
-                $this->data_localizacao = $informacao[1];
+            if (strtolower($information[0]) == "data do registro") {
+                $this->data_localizacao = $information[1];
             }
 
-            if (strtolower($informacao[0]) == "boletim de ocorrência") {
-                $this->boletimDeOcorrecia = $informacao[1];
+            if (strtolower($information[0]) == "boletim de ocorrência") {
+                $this->boletimDeOcorrecia = $information[1];
             }
 
-            if (strtolower($informacao[0]) == "natural") {
-                $informacao = explode("\\", $informacao[1]);
-                $this->cidade = $informacao[0];
-                $this->estado = $informacao[1];
+            if (strtolower($information[0]) == "natural") {
+                $information = explode("\\", $information[1]);
+                $this->cidade = $information[0];
+                $this->estado = $information[1];
             }
         }
     }
 
-    public function geraJson($name = "")
+    public function generateJson($name = "")
     {
         $arr_json = array(
             'name' => 'PoliciaCivilGO',

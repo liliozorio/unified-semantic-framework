@@ -5,58 +5,58 @@ require_once 'Method.php';
 
 class IBGELinearRegressionMethod implements \Method
 {
-    public function executeMethod($pessoa)
+    public function executeMethod($person)
     {
-        if ($pessoa->getAttribute('nome') == null ||
-            ($pessoa->getAttribute('sexo') != null && $pessoa->getAttribute('nome') != null)
+        if ($person->getAttribute('nome') == null ||
+            ($person->getAttribute('sexo') != null && $person->getAttribute('nome') != null)
         ) {
             return;
         }
 
-        $nome = $pessoa->getAttribute('nome');
-        $nome = explode(" ", $nome);
+        $name = $person->getAttribute('nome');
+        $name = explode(" ", $name);
 
         $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, "http://servicodados.ibge.gov.br/api/v2/censos/nomes/" . $nome[0] . "?sexo=F");
+        curl_setopt($curl, CURLOPT_URL, "http://servicodados.ibge.gov.br/api/v2/censos/nomes/" . $name[0] . "?sexo=F");
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_TIMEOUT, 3);
-        $resposta = curl_exec($curl);
+        $answer = curl_exec($curl);
         curl_close($curl);
 
-        $frequenciaFeminino = 0;
-        $arr_resposta = json_decode($resposta, true);
+        $feminineFrequency = 0;
+        $arr_answer = json_decode($answer, true);
 
-        if (!empty($arr_resposta)) {
-            foreach ($arr_resposta[0]['res'] as $frequenciaByAno) {
-                $frequenciaFeminino += $frequenciaByAno['frequencia'];
+        if (!empty($arr_answer)) {
+            foreach ($arr_answer[0]['res'] as $frequencyPerYear) {
+                $feminineFrequency += $frequencyPerYear['frequencia'];
             }
         }
 
         $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, "http://servicodados.ibge.gov.br/api/v2/censos/nomes/" . $nome[0] . "?sexo=M");
+        curl_setopt($curl, CURLOPT_URL, "http://servicodados.ibge.gov.br/api/v2/censos/nomes/" . $name[0] . "?sexo=M");
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_TIMEOUT, 3);
-        $resposta = curl_exec($curl);
+        $answer = curl_exec($curl);
         curl_close($curl);
 
-        $frequenciaMasculina = 0;
-        $arr_resposta = json_decode($resposta, true);
-        if (!empty($arr_resposta)) {
-            foreach ($arr_resposta[0]['res'] as $frequenciaByAno) {
-                $frequenciaMasculina += $frequenciaByAno['frequencia'];
+        $maleFrequency = 0;
+        $arr_answer = json_decode($answer, true);
+        if (!empty($arr_answer)) {
+            foreach ($arr_answer[0]['res'] as $frequencyPerYear) {
+                $maleFrequency += $frequencyPerYear['frequencia'];
             }
         }
 
-        if ($frequenciaFeminino > $frequenciaMasculina) {
-            $sexo = 'feminino';
+        if ($feminineFrequency > $maleFrequency) {
+            $sex = 'feminino';
         }
 
-        if ($frequenciaMasculina > $frequenciaFeminino) {
-            $sexo = 'masculino';
+        if ($maleFrequency > $feminineFrequency) {
+            $sex = 'masculino';
         }
 
-        $pessoa->setAttribute('sexo', $sexo);
+        $person->setAttribute('sexo', $sex);
     }
 }

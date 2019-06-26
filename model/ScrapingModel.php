@@ -3,9 +3,6 @@
 namespace model;
 
 use ReflectionClass;
-use Thread;
-use scraping\PoliciaCivilGO;
-use scraping\PoliciaMilitarSC;
 
 
 class ScrapingModel

@@ -26,9 +26,9 @@ class PoliciaMilitarSC implements Scraping
         $urlBase = "http://www.pm.sc.gov.br/desaparecidos/consulta-desaparecidos.php?&p_init=";
 
         for ($i = 0; $i <= 20; $i++) {
-            $htmlPagina = file_get_html($urlBase . $i);
+            $htmlPage = file_get_html($urlBase . $i);
 
-            foreach ($htmlPagina->find('div[class="item"]') as $item) {
+            foreach ($htmlPage->find('div[class="item"]') as $item) {
                 $img = $item->find('img[width="75px"]');
                 if (isset($img[0])) {
                     $this->imagem = "http://www.pm.sc.gov.br" . $img[0]->src;
@@ -38,46 +38,46 @@ class PoliciaMilitarSC implements Scraping
                 $this->situacao = "desaparecida";
 
                 foreach ($item->find('div[class="item-info-detail"]') as $itemInfomacao) {
-                    $this->getInformacoesDesaparecidos($itemInfomacao->plaintext);
+                    $this->getInformationDesaparecidos($itemInfomacao->plaintext);
                 }
                 $name = $name = 'PoliciaMilitarSC_'.$cont.'.json';
-                $this->geraJson($name);
+                $this->generateJson($name);
                 $cont++;
             }
         }
         echo "<h4>Scraping Realizado</h4>";
     }
 
-    public function getInformacoesDesaparecidos($dados)
+    public function getInformationDesaparecidos($dados)
     {
-        $informacao = explode(":", $dados);
+        $information = explode(":", $dados);
 
-        if (strtolower($informacao[0]) == "nome") {
-            $this->sexo = $informacao[1];
+        if (strtolower($information[0]) == "nome") {
+            $this->sexo = $information[1];
         }
 
-        if (strtolower($informacao[0]) == "data de nascimento") {
-            $this->dt_nascimento = $informacao[1];
+        if (strtolower($information[0]) == "data de nascimento") {
+            $this->dt_nascimento = $information[1];
         }
 
-        if (strtolower($informacao[0]) == "desaparecido em") {
-            $this->dt_desaparecimento = $informacao[1];
+        if (strtolower($information[0]) == "desaparecido em") {
+            $this->dt_desaparecimento = $information[1];
         }
 
-        if (strtolower($informacao[0]) == "estado onde reside") {
-            $this->estado = $informacao[1];
+        if (strtolower($information[0]) == "estado onde reside") {
+            $this->estado = $information[1];
         }
 
-        if (strtolower($informacao[0]) == "cidade onde reside") {
-            $this->cidade = $informacao[1];
+        if (strtolower($information[0]) == "cidade onde reside") {
+            $this->cidade = $information[1];
         }
 
-        if (strtolower($informacao[0]) == "descrição dos fatos") {
-            $this->circunstancia_desaparecimento = $informacao[1];
+        if (strtolower($information[0]) == "descrição dos fatos") {
+            $this->circunstancia_desaparecimento = $information[1];
         }
     }
 
-    public function geraJson($name)
+    public function generateJson($name)
     {
         $arr_json = array(
             'name' => 'PoliciaMilitarSC',

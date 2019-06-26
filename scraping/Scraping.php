@@ -6,5 +6,5 @@ interface Scraping
 {
     public function scraping();
 
-    public function geraJson($name);
+    public function generateJson($name);
 }

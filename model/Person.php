@@ -2,7 +2,9 @@
 
 namespace model;
 
-class Pessoa
+require_once __DIR__.'/../Controller/../model/DataV0.php';
+
+class Person implements DataV0
 {
     private $nome;
     private $apelido;
@@ -64,7 +66,7 @@ class Pessoa
         return $this->$attribute;
     }
 
-    public function printPessoa()
+    public function printPerson()
     {
         foreach ($this->arr_attributes as $attribute) {
             echo "<b>" . $attribute . ":</b> " . $this->getAttribute($attribute) . "<br>";
