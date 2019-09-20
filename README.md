@@ -1,5 +1,7 @@
 ###Estruturação do framework
 
+Referencias: https://doi.org/10.1145/3330204.3330267
+
 - Todo o framework é gerenciado pelo arquivo ``Controller/Controller.php``.
     - A função **index()** é a função chamada no arquivo ```index.php```, ela inicia a execução do framework.
 
