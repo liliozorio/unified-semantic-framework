@@ -10,26 +10,30 @@ require_once __DIR__.'/../Controller/../scraping/Scraping.php';
 
 class DicionarioFonetico implements Scraping
 {
-    //private $palavras = new ArrayObject();
 
     public function scraping()
     {
 
         $urlBase = "http://www.portaldalinguaportuguesa.org/index.php?action=fonetica&region=spx&act=list&letter=";
-
-        $htmlPagina = file_get_html($urlBase."a");
-        $palavrasPag = $htmlPagina->find('td[title="Palavra"]');
+        $letraAtual = "u";
+        $numeroAtual = 0;
         //echo $palavrasPag[0];
         //Para a letra A tem 7283 resultados, cada página vai de 20 em 20, o que dá 364 páginas: 
-        /*
-        for ($i = 0; $i <= 40; $i=$i+20) {
-            $htmlPagina = file_get_html($urlBase.$i);
+        $flag = true;
+        $i = 0;
+        while($flag) {
+            $numeroAtual = $i*20;
+            $htmlPagina = file_get_html($urlBase.$letraAtual."&start=".$numeroAtual);
             $palavrasPag = $htmlPagina->find('td[title="Palavra"]');
-            echo $palavrasPag;
-            //$this->palavras->append($palavrasPag);
+            for($j = 0; $j < 20; $j++)
+            {
+                echo $palavrasPag[$j];
+            }
+            /*if (end($palavrasPag) == null){
+                $flag = false;
+            }*/
+            $i++;
         }
-        */
-        //echo $this->palavras[0];
         echo "<h4>Scraping Realizado</h4>";
     }
 
