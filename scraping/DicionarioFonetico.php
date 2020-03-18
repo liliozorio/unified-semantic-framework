@@ -28,7 +28,7 @@ class DicionarioFonetico implements Scraping
             $palavrasPag = $htmlPagina->find('td[title="Palavra"]');
             for($j = 0; $j < 20; $j++)
             {
-                echo $palavrasPag[$j]->plaintext;//Testar variações
+                echo ($palavrasPag[$j]->plaintext).', ';//Testar variações
             }
             $flag=false;
             /*if (end($palavrasPag) == null){
