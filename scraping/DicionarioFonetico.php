@@ -17,6 +17,7 @@ class DicionarioFonetico implements Scraping
         $urlBase = "http://www.portaldalinguaportuguesa.org/index.php?action=fonetica&region=spx&act=list&letter=";
         $letraAtual = "u";
         $numeroAtual = 0;
+        //$htmlPagina = file_get_html($urlBase.$letraAtual."&start=".$numeroAtual);
         //echo $palavrasPag[0];
         //Para a letra A tem 7283 resultados, cada página vai de 20 em 20, o que dá 364 páginas: 
         $flag = true;
@@ -27,8 +28,9 @@ class DicionarioFonetico implements Scraping
             $palavrasPag = $htmlPagina->find('td[title="Palavra"]');
             for($j = 0; $j < 20; $j++)
             {
-                echo $palavrasPag[$j];
+                echo $palavrasPag[$j]->plaintext;//Testar variações
             }
+            $flag=false;
             /*if (end($palavrasPag) == null){
                 $flag = false;
             }*/
@@ -100,5 +102,4 @@ class DicionarioFonetico implements Scraping
     }
 }
 
-var_dump($palavras);
 ?>
