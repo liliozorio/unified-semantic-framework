@@ -10,12 +10,12 @@ require_once __DIR__.'/../Controller/../scraping/Scraping.php';
 
 class DicionarioFonetico implements Scraping
 {
-
+    private $letras = array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z');
     public function scraping()
     {
 
         $urlBase = "http://www.portaldalinguaportuguesa.org/index.php?action=fonetica&region=spx&act=list&letter=";
-        $letraAtual = "u";
+        $letraAtual = "x";
         $numeroAtual = 0;
         //$htmlPagina = file_get_html($urlBase.$letraAtual."&start=".$numeroAtual);
         //echo $palavrasPag[0];
@@ -26,11 +26,16 @@ class DicionarioFonetico implements Scraping
             $numeroAtual = $i*20;
             $htmlPagina = file_get_html($urlBase.$letraAtual."&start=".$numeroAtual);
             $palavrasPag = $htmlPagina->find('td[title="Palavra"]');
+            $foneticasPag = $htmlPagina->find('td[title="Fonética"]');
             for($j = 0; $j < 20; $j++)
             {
-                echo ($palavrasPag[$j]->plaintext).', ';//Testar variações
+                echo ($palavrasPag[$j]->plaintext).' -> '.($foneticasPag[$j]->plaintext)."<br>";//Testar variações
             }
-            $flag=false;
+            
+            if($i === 1)
+            {
+                $flag=false;
+            }
             /*if (end($palavrasPag) == null){
                 $flag = false;
             }*/
