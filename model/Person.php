@@ -30,32 +30,6 @@ class Person implements DataV0
     private $data_localizacao;
     private $boletimDeOcorrecia;
 
-    private $arr_attributes = array(
-        'nome',
-        'apelido',
-        'dt_nascimento',
-        'imagem',
-        'sexo',
-        'idade',
-        'cidade',
-        'cidade_uri',
-        'estado',
-        'altura',
-        'peso',
-        'pele',
-        'cor_cabelo',
-        'cor_olho',
-        'mais_caracteristicas',
-        'dt_desaparecimento',
-        'local_desaparecimento',
-        'data_localizacao',
-        'circunstancia_desaparecimento',
-        'dados_adicionais',
-        'situacao',
-        'boletimDeOcorrecia',
-        'fonte');
-
-
     public function setAttribute($attribute, $value)
     {
         $this->$attribute = $value;
@@ -68,9 +42,19 @@ class Person implements DataV0
 
     public function printPerson()
     {
-        foreach ($this->arr_attributes as $attribute) {
+        foreach ($this as $attribute) {
             echo "<b>" . $attribute . ":</b> " . $this->getAttribute($attribute) . "<br>";
         }
         echo "<br><br>";
     }
+
+
+    public function __toJSon(){
+        $json = array();
+        foreach($this as $key => $value) {
+            $json[$key] = $value;
+        }
+        return json_encode($json);
+    }
+
 }
