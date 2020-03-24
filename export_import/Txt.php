@@ -1,22 +1,25 @@
 <?php
 namespace export_import;
 
+use function MongoDB\BSON\toJSON;
+
 require_once 'Export_Import.php';
 
 class Txt implements Export_Import
 {
     public function export($person)
     {
-        $fileTxt = "exportPessoa.txt";
-        $objData = serialize($person);
-        $file = fopen($fileTxt, "w");
-        fwrite($file, $objData);
+        $fileTxt = "exportPeople.txt";
+        $file = fopen($fileTxt, "a");
+        var_dump( method_exists($person , '__toString'));
+
+        fwrite($file, $person->__toJson().PHP_EOL);
         fclose($file);
     }
 
     public function import($person)
     {
-        $fileTxt = "importPessoa.txt";
+        $fileTxt = "importPeople.txt";
         $objData = file_get_contents($fileTxt);
         $obj = unserialize($objData);
 

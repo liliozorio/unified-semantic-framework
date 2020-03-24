@@ -111,7 +111,7 @@ class Controller
                 echo("<b>Erro:</b> ". $e->getMessage());
             }
 
-            $bd->import($person);
+            $bd->export($person);
         }
     }
 

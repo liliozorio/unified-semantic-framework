@@ -5,12 +5,12 @@ require_once __DIR__.'/../export_import/Export_Import.php';
 
 class Allegrograph implements Export_Import
 {
-    public function export($person)
+    public function import($person)
     {
 
     }
 
-    public function import($person)
+    public function export($person)
     {
         $this->insertPerson($person);
     }
