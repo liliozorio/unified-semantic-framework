@@ -11,8 +11,6 @@ class Txt implements Export_Import
     {
         $fileTxt = "exportPeople.txt";
         $file = fopen($fileTxt, "a");
-        var_dump( method_exists($person , '__toString'));
-
         fwrite($file, $person->__toJson().PHP_EOL);
         fclose($file);
     }
