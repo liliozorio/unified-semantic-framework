@@ -4,7 +4,7 @@ namespace scraping;
 
 require_once __DIR__ . '/../simplehtmldom_1_8_1/simple_html_dom.php';
 
-require_once __DIR__.'/../Controller/../scraping/Scraping.php';
+require_once __DIR__ . '/../Controller/../scraping/Scraping.php';
 
 class PoliciaCivilGO implements Scraping
 {
@@ -23,47 +23,51 @@ class PoliciaCivilGO implements Scraping
 
     public function scraping()
     {
-        $urlBase = "http://www.policiacivil.go.gov.br/pessoas-desaparecidas/";
-
-        $htmlPagina = file_get_html($urlBase);
-
-        $divsDesaparecidos = $htmlPagina->find('div[class="td-module-thumb"]');
+        $urlBase = "http://www.policiacivil.go.gov.br/pessoas-desaparecidas/page/";
 
         $cont = 0;
-        foreach ($divsDesaparecidos as $divDesaparecido) {
+        for ($page = 1; $page < 3; $page++) {
+            $htmlPagina = file_get_html($urlBase . $page);
+            print_r($urlBase . $page);
 
-            $divDesaparecido = str_get_html($divDesaparecido);
-            $linkDesaparecido = $divDesaparecido->find('a[rel="bookmark"]')[0];
-            $pageDesaparecido = file_get_html($linkDesaparecido->href);
+            $divsDesaparecidos = $htmlPagina->find('div[class="td-module-thumb"]');
 
-            $img = $pageDesaparecido->find('a img');
-            if (isset($img[8])) {
-                $this->imagem = trim($img[8]->src);
+            foreach ($divsDesaparecidos as $divDesaparecido) {
+
+                $divDesaparecido = str_get_html($divDesaparecido);
+                $linkDesaparecido = $divDesaparecido->find('a[rel="bookmark"]')[0];
+                $pageDesaparecido = file_get_html($linkDesaparecido->href);
+
+                $img = $pageDesaparecido->find('a img');
+                if (isset($img[8])) {
+                    $this->imagem = trim($img[8]->src);
+                }
+
+                $this->situacao = "desaparecida";
+                $this->fonte = $linkDesaparecido->href;
+                $auxNome = $pageDesaparecido->find('h1[class="entry-title"]');
+                $this->nome = html_entity_decode(trim($auxNome[0]->plaintext));
+
+                $divDadosDesaparecido = $pageDesaparecido->find('div[class="td-post-content"]');
+                $divDadosDesaparecido = str_get_html($divDadosDesaparecido[0]);
+                $pDadosDesaparecido = $divDadosDesaparecido->find('p');
+
+
+                if (!empty($pDadosDesaparecido)) {
+                    $dados = $pDadosDesaparecido[0]->plaintext;
+                    $dados = explode("\n", $dados);
+                    $this->getInformationDesaparecidos($dados);
+                }
+                $this->cont = $cont;
+                $this->generateJson();
+                $cont++;
             }
-
-            $this->situacao = "desaparecida";
-            $this->fonte = $linkDesaparecido->href;
-            $auxNome = $pageDesaparecido->find('h1[class="entry-title"]');
-            $this->nome = html_entity_decode(trim($auxNome[0]->plaintext));
-
-            $divDadosDesaparecido = $pageDesaparecido->find('div[class="td-post-content"]');
-            $divDadosDesaparecido = str_get_html($divDadosDesaparecido[0]);
-            $pDadosDesaparecido = $divDadosDesaparecido->find('p');
-
-
-            if (!empty($pDadosDesaparecido)) {
-                $dados = $pDadosDesaparecido[0]->plaintext;
-                $dados = explode("\n", $dados);
-                $this->getInformationDesaparecidos($dados);
-            }
-            $this->cont = $cont;
-            $this->generateJson();
-            $cont++;
         }
         echo "<h4>Scraping Realizado</h4>";
     }
 
-    public function getInformationDesaparecidos($dados){
+    public function getInformationDesaparecidos($dados)
+    {
         foreach ($dados as $arr_informacoes) {
             $information = explode(":", $arr_informacoes);
 
@@ -118,10 +122,10 @@ class PoliciaCivilGO implements Scraping
         $formattedData = json_encode($arr_json);
 
         //set the filename
-        $filename = 'PoliciaCivilGO_'.$this->cont.'.json';
+        $filename = 'PoliciaCivilGO_' . $this->cont . '.json';
 
         //open or create the file
-        $handle = fopen( __DIR__ . '/../json/PoliciaCivilGO/'.$filename, 'w+');
+        $handle = fopen(__DIR__ . '/../json/PoliciaCivilGO/' . $filename, 'w+');
 
         //write the data into the file
         fwrite($handle, $formattedData);
