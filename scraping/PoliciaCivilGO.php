@@ -28,7 +28,6 @@ class PoliciaCivilGO implements Scraping
         $cont = 0;
         for ($page = 1; $page < 3; $page++) {
             $htmlPagina = file_get_html($urlBase . $page);
-            print_r($urlBase . $page);
 
             $divsDesaparecidos = $htmlPagina->find('div[class="td-module-thumb"]');
 
