@@ -19,7 +19,10 @@ class DicionarioFonetico implements Scraping
         $numeroAtual = 0;
         //$htmlPagina = file_get_html($urlBase.$letraAtual."&start=".$numeroAtual);
         //echo $palavrasPag[0];
-        //Para a letra A tem 7283 resultados, cada página vai de 20 em 20, o que dá 364 páginas: 
+        
+        //Tenho que usar o getElementByTagName para percorrer por todos os tds da tabela
+
+        //Para a letra X tem 77 resultados, cada página vai de 20 em 20, o que dá 4 páginas:
         $flag = true;
         $i = 0;
         while($flag) {
@@ -27,18 +30,27 @@ class DicionarioFonetico implements Scraping
             $htmlPagina = file_get_html($urlBase.$letraAtual."&start=".$numeroAtual);
             $palavrasPag = $htmlPagina->find('td[title="Palavra"]');
             $foneticasPag = $htmlPagina->find('td[title="Fonética"]');
-            for($j = 0; $j < 20; $j++)
+            $tabelaPag = $htmlPagina->find('table[id="rollovertable"]');
+            $categoria = $tabelaPag[0]->getElementsByTagName('td');
+            $indexCategoria = 1;
+            if (is_null($palavrasPag[0]))
             {
-                echo ($palavrasPag[$j]->plaintext).' -> '.($foneticasPag[$j]->plaintext)."<br>";//Testar variações
-            }
-            
-            if($i === 1)
-            {
-                $flag=false;
-            }
-            /*if (end($palavrasPag) == null){
+                echo "bagulho é doido se chegou aqui";
                 $flag = false;
+            }
+            else
+            {
+                for($j = 0; $j < 20; $j++)
+                {
+                    echo ($palavrasPag[$j]->plaintext).' -> '.($categoria[$indexCategoria])."->".($foneticasPag[$j]->plaintext)."<br>";
+                    $indexCategoria = $indexCategoria + 3;
+                }   
+            }
+            /*if($i === 1)
+            {
+                $flag=false; z4Xt4V9pDBaG
             }*/
+            
             $i++;
         }
         echo "<h4>Scraping Realizado</h4>";
