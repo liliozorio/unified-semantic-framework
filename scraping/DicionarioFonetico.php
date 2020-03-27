@@ -11,48 +11,56 @@ require_once __DIR__.'/../Controller/../scraping/Scraping.php';
 class DicionarioFonetico implements Scraping
 {
     private $letras = array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z');
+    public $dicionario = array();
     public function scraping()
     {
 
         $urlBase = "http://www.portaldalinguaportuguesa.org/index.php?action=fonetica&region=spx&act=list&letter=";
-        $letraAtual = "x";
+        //$letraAtual = $this->$letras[23];
         $numeroAtual = 0;
         //$htmlPagina = file_get_html($urlBase.$letraAtual."&start=".$numeroAtual);
         //echo $palavrasPag[0];
         
         //Tenho que usar o getElementByTagName para percorrer por todos os tds da tabela
 
-        //Para a letra X tem 77 resultados, cada página vai de 20 em 20, o que dá 4 páginas:
-        $flag = true;
-        $i = 0;
-        while($flag) {
-            $numeroAtual = $i*20;
-            $htmlPagina = file_get_html($urlBase.$letraAtual."&start=".$numeroAtual);
-            $palavrasPag = $htmlPagina->find('td[title="Palavra"]');
-            $foneticasPag = $htmlPagina->find('td[title="Fonética"]');
-            $tabelaPag = $htmlPagina->find('table[id="rollovertable"]');
-            $categoria = $tabelaPag[0]->getElementsByTagName('td');
-            $indexCategoria = 1;
-            if (is_null($palavrasPag[0]))
-            {
-                echo "bagulho é doido se chegou aqui";
-                $flag = false;
-            }
-            else
-            {
+        //Exemplo: para a letra X tem 77 resultados, cada página vai de 20 em 20, o que dá 4 páginas:
+        //foreach($this->letras as $letra)
+        for($letra = 24; $letra < 26; $letra++)
+        {
+            $i=0;
+            $flag = true;
+            $cont = 0;
+            while($flag) {
+                $numeroAtual = $i*20;
+                $htmlPagina = file_get_html($urlBase.$this->letras[$letra]."&start=".$numeroAtual);
+                $palavrasPag = $htmlPagina->find('td[title="Palavra"]');
+                $foneticasPag = $htmlPagina->find('td[title="Fonética"]');
+                $tabelaPag = $htmlPagina->find('table[id="rollovertable"]');
+                $categoria = $tabelaPag[0]->getElementsByTagName('td');
+                $indexCategoria = 1;
                 for($j = 0; $j < 20; $j++)
                 {
-                    echo ($palavrasPag[$j]->plaintext).' -> '.($categoria[$indexCategoria])."->".($foneticasPag[$j]->plaintext)."<br>";
+                    if (is_null($palavrasPag[$j]))
+                    {
+                        $flag = false;
+                        break 2;
+                    }
+                    //echo ($palavrasPag[$j]->plaintext).' -> '.($categoria[$indexCategoria]).' -> '.($foneticasPag[$j]->plaintext).'<br>';
+                    array_push($this->dicionario, array($palavrasPag[$j]->plaintext, $categoria[$indexCategoria], $foneticasPag[$j]->plaintext));
+                    //print_r($this->dicionario[$cont]);
+                    //$cont++;
                     $indexCategoria = $indexCategoria + 3;
                 }   
+                /*if($i === 1)
+                {
+                    $flag=false; z4Xt4V9pDBaG
+                }*/
+                
+                $i++;
             }
-            /*if($i === 1)
-            {
-                $flag=false; z4Xt4V9pDBaG
-            }*/
-            
-            $i++;
         }
+        //Testando pra ver se o array_push funcionou
+        echo ($this->dicionario[10][0]).' -> '.($this->dicionario[10][1]).' -> '.($this->dicionario[10][2]);
         echo "<h4>Scraping Realizado</h4>";
     }
 
