@@ -12,7 +12,7 @@ class DicionarioFonetico implements Scraping
 {
     private $letras = array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z');
     public $dicionario = array();
-    public $linha = array(); //linha do dicionario, criada com o propósito de deixar num formato json
+    //public $linha = array(); //linha do dicionario, criada com o propósito de deixar num formato json
     //Se for necessario a variavel da linha, provavelmente a atribuição deva ser feita assim:
     /*reset($this->linha); 
     array_push($this->linha, array('Palavra' => $palavrasPag[$j]->plaintext));
@@ -32,7 +32,7 @@ class DicionarioFonetico implements Scraping
 
         //Exemplo: para a letra X tem 77 resultados, cada página vai de 20 em 20, o que dá 4 páginas:
         //foreach($this->letras as $letra)
-        for($letra = 24; $letra < 26; $letra++)
+        for($letra = 23; $letra < 26; $letra++)
         {
             $i=0;
             $flag = true;
@@ -53,7 +53,7 @@ class DicionarioFonetico implements Scraping
                         break 2;
                     }
                     //echo ($palavrasPag[$j]->plaintext).' -> '.($categoria[$indexCategoria]).' -> '.($foneticasPag[$j]->plaintext).'<br>';
-                    array_push($this->dicionario, array('Palavra' => $palavrasPag[$j]->plaintext, 'Categoria' => $categoria[$indexCategoria], 'Fonetica' => $foneticasPag[$j]->plaintext));
+                    array_push($this->dicionario, array('Palavra' => strip_tags(html_entity_decode($palavrasPag[$j]->plaintext)), 'Categoria' => strip_tags(html_entity_decode($categoria[$indexCategoria])), 'Fonetica' => strip_tags(html_entity_decode($foneticasPag[$j]->plaintext))));
                     //print_r($this->dicionario[$cont]);
                     //$cont++;
                     $indexCategoria = $indexCategoria + 3;
@@ -66,7 +66,7 @@ class DicionarioFonetico implements Scraping
                 $i++;
             }
         }
-        //$this->generateJson("dicionario");
+        $this->generateJson("dicionario");
         //Testando pra ver se o array_push funcionou
         
         echo ($this->dicionario[10]['Palavra']).' -> '.($this->dicionario[10]['Categoria']).' -> '.($this->dicionario[10]['Fonetica']);
@@ -96,16 +96,26 @@ class DicionarioFonetico implements Scraping
         );
         */
         //format the data
-        $formattedData = json_encode($this->dicionario);
+        //$formattedData = json_encode($this->dicionario);
 
         //set the filename
-        $filename = $name.'.json';
+        $filename = $name.'.csv';
 
         //open or create the file
         $handle = fopen( __DIR__ . '/../json/DicionarioFonetico/'.$filename, 'w+');
 
+        foreach($this->dicionario as $linha)
+        {
+            //write the data into the file
+            $linha['Categoria'] = trim(preg_replace('/\t+/', '', $linha['Categoria']));
+            //Em txt:
+            //$escrita = ($linha['Palavra']).','.($linha['Categoria']).','.($linha['Fonetica']).PHP_EOL;
+            //fwrite($handle, $escrita);
+            fputcsv($handle, array_values($linha));
+
+        }
         //write the data into the file
-        fwrite($handle, $formattedData);
+        //fwrite($handle, $formattedData);
 
         //close the file
         fclose($handle);
