@@ -12,6 +12,13 @@ class DicionarioFonetico implements Scraping
 {
     private $letras = array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z');
     public $dicionario = array();
+    public $linha = array(); //linha do dicionario, criada com o propósito de deixar num formato json
+    //Se for necessario a variavel da linha, provavelmente a atribuição deva ser feita assim:
+    /*reset($this->linha); 
+    array_push($this->linha, array('Palavra' => $palavrasPag[$j]->plaintext));
+    array_push($this->linha, array('Categoria' => $categoria[$indexCategoria]));
+    array_push($this->linha, array('Fonetica' => $foneticasPag[$j]->plaintext));
+    array_push($this->dicionario, $this->linha);*/
     public function scraping()
     {
 
@@ -46,7 +53,7 @@ class DicionarioFonetico implements Scraping
                         break 2;
                     }
                     //echo ($palavrasPag[$j]->plaintext).' -> '.($categoria[$indexCategoria]).' -> '.($foneticasPag[$j]->plaintext).'<br>';
-                    array_push($this->dicionario, array($palavrasPag[$j]->plaintext, $categoria[$indexCategoria], $foneticasPag[$j]->plaintext));
+                    array_push($this->dicionario, array('Palavra' => $palavrasPag[$j]->plaintext, 'Categoria' => $categoria[$indexCategoria], 'Fonetica' => $foneticasPag[$j]->plaintext));
                     //print_r($this->dicionario[$cont]);
                     //$cont++;
                     $indexCategoria = $indexCategoria + 3;
@@ -59,65 +66,43 @@ class DicionarioFonetico implements Scraping
                 $i++;
             }
         }
+        //$this->generateJson("dicionario");
         //Testando pra ver se o array_push funcionou
-        echo ($this->dicionario[10][0]).' -> '.($this->dicionario[10][1]).' -> '.($this->dicionario[10][2]);
+        
+        echo ($this->dicionario[10]['Palavra']).' -> '.($this->dicionario[10]['Categoria']).' -> '.($this->dicionario[10]['Fonetica']);
         echo "<h4>Scraping Realizado</h4>";
+        //unset($this->linha);
+        //unset($this->dicionario);
+        
     }
 
-    public function getInformation($dados)
-    {
-        $information = explode(":", $dados);
-
-        if (strtolower($information[0]) == "nome") {
-            $this->sexo = $information[1];
-        }
-
-        if (strtolower($information[0]) == "data de nascimento") {
-            $this->dt_nascimento = $information[1];
-        }
-
-        if (strtolower($information[0]) == "desaparecido em") {
-            $this->dt_desaparecimento = $information[1];
-        }
-
-        if (strtolower($information[0]) == "estado onde reside") {
-            $this->estado = $information[1];
-        }
-
-        if (strtolower($information[0]) == "cidade onde reside") {
-            $this->cidade = $information[1];
-        }
-
-        if (strtolower($information[0]) == "descrição dos fatos") {
-            $this->circunstancia_desaparecimento = $information[1];
-        }
-    }
 
     public function generateJson($name)
     {
+        /*
+            array('nome' => $this->nome),
+            array('dt_nascimento' => $this->dt_nascimento),
+            array('dt_desaparecimento' => $this->dt_desaparecimento),
+            array('cidade' => $this->cidade),
+            array('estado' => $this->estado),
+            array('imagem' => $this->imagem),
+            array('fonte' => $this->fonte),
+            array('circunstancia_desaparecimento' => $this->circunstancia_desaparecimento),
+            array('situacao' => $this->situacao),
+        
         $arr_json = array(
-            'name' => 'PoliciaMilitarSC',
-            'attributes' => array(
-                array('nome' => $this->nome),
-                array('dt_nascimento' => $this->dt_nascimento),
-                array('dt_desaparecimento' => $this->dt_desaparecimento),
-                array('cidade' => $this->cidade),
-                array('estado' => $this->estado),
-                array('imagem' => $this->imagem),
-                array('fonte' => $this->fonte),
-                array('circunstancia_desaparecimento' => $this->circunstancia_desaparecimento),
-                array('situacao' => $this->situacao),
-            )
+            'name' => 'DicionarioFonetico',
+            'dicionario' => $this->dicionario
         );
-
+        */
         //format the data
-        $formattedData = json_encode($arr_json);
+        $formattedData = json_encode($this->dicionario);
 
         //set the filename
-        $filename = $name;
+        $filename = $name.'.json';
 
         //open or create the file
-        $handle = fopen( __DIR__ . '/../json/PoliciaMilitarSC/'.$filename, 'w+');
+        $handle = fopen( __DIR__ . '/../json/DicionarioFonetico/'.$filename, 'w+');
 
         //write the data into the file
         fwrite($handle, $formattedData);
