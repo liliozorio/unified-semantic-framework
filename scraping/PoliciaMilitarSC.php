@@ -23,29 +23,96 @@ class PoliciaMilitarSC implements Scraping
     {
         $cont = 0;
 
-        $urlBase = "http://www.pm.sc.gov.br/desaparecidos/consulta-desaparecidos.php?&p_init=";
+        $urlBase = "https://www.pm.sc.gov.br/sos-desaparecidos/default/index?SosDesaparecidosSearch[sos_status_desaparecido_id]=";
 
-        for ($i = 0; $i <= 20; $i++) {
-            $htmlPage = file_get_html($urlBase . $i);
+        for($situacao = 1; $situacao <= 2; $situacao++){
 
-            foreach ($htmlPage->find('div[class="item"]') as $item) {
-                $img = $item->find('img[width="75px"]');
-                if (isset($img[0])) {
-                    $this->imagem = "http://www.pm.sc.gov.br" . $img[0]->src;
+            $pageLimit = 0;
+
+            $urlSituacao = $urlBase . $situacao;
+
+            if($situacao == 1){
+                $pageLimit = 6;
+            }else{
+                $pageLimit = 7;
+            }
+
+            for ($i = 1; $i <= $pageLimit; $i++) {
+
+                $htmlPage = file_get_html($urlSituacao. '&page=' . $i);
+    
+                // pega a tabela de desaparecidos da página
+                $table = $htmlPage->getElementsByTagName('tbody');
+                // $rowData = array(); // array para os dados da tabela
+    
+                foreach ($table->find('tr') as $row){
+    
+                    $register = array(); // array auxiliar para pegar o registro de desaparecido
+    
+                    foreach($row->find('td') as $cell){
+    
+                        if( $cell->find('img') ){ 
+    
+                            $img = $cell->find('img');
+                            $register[] = $img[0]->src;
+    
+                        }else if( $cell->find('a[title="Ver detalhes"]') ){
+    
+                            $a = $cell->find('a[title="Ver detalhes"]');
+                            $fonte = "https://www.pm.sc.gov.br".$a[0]->href;
+                            $register[] = $fonte;
+    
+                            $desaparecidoPage = file_get_html("https://www.pm.sc.gov.br".$a[0]->href);
+    
+                            $idade = $desaparecidoPage->find('li')[31]->plaintext; //idade
+    
+                            $register[] = $idade;
+    
+                        }else{
+                            $register[] = $cell->plaintext;
+                        }
+    
+                    }
+    
+                    $this->saveRegisterDesaparecido($register);
+    
+                    $name = $name = 'PoliciaMilitarSC_'.$cont.'.json';
+                    $this->generateJson($name);
+                    $cont++;
+    
                 }
-
-                $this->fonte = "http://www.pm.sc.gov.br/desaparecidos/consulta-desaparecidos.php?&p_init=$i";
-                $this->situacao = "desaparecida";
-
-                foreach ($item->find('div[class="item-info-detail"]') as $itemInfomacao) {
-                    $this->getInformationDesaparecidos($itemInfomacao->plaintext);
-                }
-                $name = $name = 'PoliciaMilitarSC_'.$cont.'.json';
-                $this->generateJson($name);
-                $cont++;
+    
             }
         }
         echo "<h4>Scraping Realizado</h4>";
+    }
+
+    public function saveRegisterDesaparecido($registro){
+
+        $this->imagem = $registro[0];
+        $this->nome = $registro[1];
+
+        if($registro[2] == 'Não informado'){
+            $this->cidade = 'nao informado';
+            $this->estado = 'nao informado';
+
+        }else{
+            $separador = strpos($registro[2], '/');
+            $this->cidade = substr($registro[2], 0, $separador);
+            $this->estado = substr($registro[2], $separador+1);
+        }
+
+        $this->dt_desaparecimento = $registro[3];
+
+        $this->situacao = $registro[4];
+
+        $this->fonte = $registro[5];
+
+        if(preg_match('~[0-9]+~', $registro[6])){
+
+            $idade = substr($registro[6], 7, -5);
+            $this->idade = $idade;
+        }
     }
 
     public function getInformationDesaparecidos($dados)
