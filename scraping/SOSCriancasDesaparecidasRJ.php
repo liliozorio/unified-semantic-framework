@@ -82,18 +82,7 @@ class SOSCriancasDesaparecidasRJ implements Scraping{
         curl_close($ch);
     
         return $page;
-    }
-
-    // Retorna um array de idnum
-    public function getIdNums($page){
-        $idnum = array();
-
-        $dados = $this->getPage($page,1);
-
-        // return $idnum;
-    }
-
-	
+    }	
 
 	public function scraping(){
 
@@ -117,10 +106,6 @@ class SOSCriancasDesaparecidasRJ implements Scraping{
 
                 $img = $html->find('p[align=center] img[oncontextmenu=return false]',0)->src;
 
-                // print_r($data);
-
-                // echo $data[0]."                              ";
-
 				$this->saveData($people->IDNUM, $img, $data);
 
 				$name = $name = 'SOSCriancasDesaparecidasRJ_'.$cont.'.json';
@@ -130,8 +115,6 @@ class SOSCriancasDesaparecidasRJ implements Scraping{
 
             }
         }
-				
-
 	}
 
 	public function saveData($idnum, $img, $data){
