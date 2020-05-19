@@ -188,7 +188,7 @@ class DATAPoliciaCivilPA implements Scraping{
 				array('cor_cabelo' => $this->cor_cabelo),
 				array('pele' => $this->cor_pele),
 				array('dt_nascimento' => $this->dt_nascimento),
-                array('dt_desaparecimento' => $this->dt_desaparecimento),
+                array('dt_desaparecimento' => $this->data_desaparecimento),
                 array('cidade' => $this->cidade),
                 array('estado' => $this->estado),
                 array('imagem' => $this->imagem),
