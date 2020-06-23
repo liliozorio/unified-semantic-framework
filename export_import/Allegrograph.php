@@ -18,18 +18,18 @@ class Allegrograph implements Export_Import
 
     public function insertPerson($person)
     {
-        $Newid = $this->gethigherIdDesaparecido();
-        $Newid++;
+        $Newid = $this->getId($person);
 
         $login = "admin:admin";
         $format = "application/sparql-results+json";
 
         $prefix = "<http://www.desaparecidos.ufjf.br/desaparecidos/" . $Newid . ">";
         $address = "PREFIX foaf:<http://xmlns.com/foaf/0.1/>
-					 PREFIX des:<http://www.desaparecidos.com.br/rdf/>
-					 PREFIX dbpprop:<http://dbpedia.org/property/> 
-					 INSERT DATA {" . $prefix . " des:id \"" . $Newid . "\".
-                                  " . $prefix . " foaf:name \"" . $person->getAttribute('nome') . "\".";
+					PREFIX des:<http://www.desaparecidos.com.br/rdf/>
+					PREFIX dbpprop:<http://dbpedia.org/property/> 
+					INSERT DATA{      
+                            " . $prefix . " des:id \"" . $Newid . "\".
+                            " . $prefix . " foaf:name \"" . $person->getAttribute('nome') . "\".";
 
         $address = $address . $prefix . " foaf:nick \"" . $person->getAttribute('apelido') . "\".";
         $address = $address . $prefix . " foaf:birthday \"" . $person->getAttribute('dt_nascimento') . "\".";
@@ -53,36 +53,93 @@ class Allegrograph implements Export_Import
         $address = $address . $prefix . " des:source \"" . $person->getAttribute('fonte') . "\". }";
 
         $url = urlencode($address);
-        $sparqlURL = 'http://localhost:10035/repositories/Teste_Insert?query=' . $url . '';
 
+        $sparqlURL = 'http://localhost:7200/repositories/Teste_Insert/statements?update=' . $url . '';
+        
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_USERPWD, $login);
         curl_setopt($curl, CURLOPT_URL, $sparqlURL);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array('Accept: ' . $format));
+        
         curl_exec($curl);
 
         curl_close($curl);
+        echo("INSERIDO - ");
+        echo($Newid);
+        echo("\n");
+    }
+
+    function getId($person)
+    {
+	$format = "application/sparql-results+json";
+        $login = "admin:admin"; // login:senha
+        $BD = "http://localhost:7200/repositories/Teste_Insert";
+
+        $query = "PREFIX foaf:<http://xmlns.com/foaf/0.1/>
+                    PREFIX des:<http://www.desaparecidos.com.br/rdf/>  
+                    PREFIX dbpprop:<http://dbpedia.org/property/>
+                    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+                    SELECT ?id ?name WHERE { ?x des:id  ?id ;   foaf:name  ?name .  FILTER regex(str(?name), \"" . $person->getAttribute('nome') . "\") }";
+
+        $url = urlencode($query);
+        $sparqlURL = $BD . '?query=' . $url;
+                    
+        $curl = curl_init();
+        
+        curl_setopt($curl, CURLOPT_URL, $sparqlURL);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_USERPWD, $login);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array("Accept: " . $format));
+        
+        $resposta = curl_exec($curl);
+        
+        curl_close($curl);
+        
+        $jsonfile = json_decode($resposta);
+        $jsonfile = $jsonfile->results;
+
+        if(empty($jsonfile->bindings))
+        {    
+            $id = $this->gethigherIdDesaparecido();
+            return $id;
+        }
+
+        $jsonfile = $jsonfile->bindings[0];
+        $jsonfile1 = $jsonfile->name;
+        $jsonfile1 = $jsonfile1->value;
+
+        if($jsonfile1 != $person->getAttribute('nome'))
+        {
+            $id = $this->gethigherIdDesaparecido();
+	    return $id;
+        }
+
+        $jsonfile2 = $jsonfile->id;
+        $jsonfile2 = $jsonfile2->value;
+
+        $id = (int)$jsonfile2;
+        return $id;
     }
 
     function gethigherIdDesaparecido()
     {
         $format = "application/sparql-results+json";
         $login = "admin:admin"; // login:senha
-        $BD = "http://localhost:10035/repositories/Teste_Insert";
+        $BD = "http://localhost:7200/repositories/Teste_Insert";
 
         $query = "PREFIX foaf:<http://xmlns.com/foaf/0.1/>
-                             PREFIX des:<http://www.desaparecidos.com.br/rdf/>  
-			     PREFIX dbpprop:<http://dbpedia.org/property/>
-                             select ?x where{ ?id des:id ?x} order by desc(xsd:int(?x)) limit 1";
+                         PREFIX des:<http://www.desaparecidos.com.br/rdf/>  
+			 PREFIX dbpprop:<http://dbpedia.org/property/>
+                         select ?x where{ ?id des:id ?x} order by desc(xsd:int(?x)) limit 1";
 
-        $url = urlencode($query);
-        $sparqlURL = $BD . '?query=' . $url;
-
+       	$url = urlencode($query);
+	$sparqlURL = $BD . '?query=' . $url;
+            
         $curl = curl_init();
 
-        curl_setopt($curl, CURLOPT_URL, $sparqlURL);
+   	curl_setopt($curl, CURLOPT_URL, $sparqlURL);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_USERPWD, $login);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array("Accept: " . $format));
@@ -102,7 +159,7 @@ class Allegrograph implements Export_Import
         $jsonfile = $jsonfile->value;
 
         $id = (int)$jsonfile;
+        $id++;
         return $id;
     }
-
 }
