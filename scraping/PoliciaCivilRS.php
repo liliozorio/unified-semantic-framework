@@ -17,11 +17,11 @@ class PoliciaCivilRS implements Scraping{
 	private $idade;
 	private $sexo;
 	private $local_desaparecimento;
-    private $dt_nascimento;
+    private $data_nascimento;
 	private $imagem;
 	private $cidade;
     private $estado;
-    private $dt_desaparecimento;
+    private $data_desaparecimento;
     private $fonte;
     private $circunstancia_desaparecimento;
     private $situacao;
@@ -29,45 +29,49 @@ class PoliciaCivilRS implements Scraping{
 	public function scraping(){
 
 		$cont = 0;
+		for($j=0; $j<4; $j++)
+		{
+        	$url ="https://www.pc.rs.gov.br/desaparecidos";
+			$urlRequest = "https://www.pc.rs.gov.br/_service/desaparecidos/listhtml?&idade=". $j . "&pagina=";
 
-        $url ="https://www.pc.rs.gov.br/desaparecidos";
-        $urlRequest = "https://www.pc.rs.gov.br/_service/desaparecidos/listhtml?&pagina=";
+    	    for($i=1 ; file_get_html($urlRequest.$i); $i ++){
 
-        for($i=1 ; file_get_html($urlRequest.$i); $i ++){
+        	    $html = file_get_html($urlRequest.$i);
 
-            $html = file_get_html($urlRequest.$i);
-
-            foreach ($html->find('div.card-desaparecido a') as $people) {
-
-				$urlPeople = str_replace(" ","%20", html_entity_decode($people->href));
-				
-				$html_people = file_get_html($url .'/'. $urlPeople);
-				$data = array();
-
-                $data['Fonte'] = $url . $urlPeople;
-
-				$data['Foto'] = $url.$html_people->find('div.card-desaparecido figure img', 0)->src;
-
-				$data['Nome'] =  html_entity_decode($html_people->find('div.card-desaparecido-info h3', 0)->plaintext);
-				
-				foreach ($html_people->find('div.card-desaparecido-info p') as $metadata) {
-					$d = trim($metadata->plaintext);
-					if ($d === "")
-						continue;
-					$d = explode(':', $d);
-					if(array_key_exists(1, $d)){
-						$data[$d[0]] = $d[1];
-					}else{
-						$data[$d[0]] = null;
+            	foreach ($html->find('div.card-desaparecido') as $people) {
+					
+					$data = array();
+					
+					foreach ($people->find("a") as $urlPeople)
+					{
+						$urlPeople = str_replace(" ","%20", html_entity_decode($urlPeople->href));
+						$data['Fonte'] = $url . $urlPeople;
 					}
-				}
-				
-				$this->saveData($data);
+					//$html_people = file_get_html($url .'/'. $urlPeople);
 
-				$name = $name = 'PoliciaCivilRS_'.$cont.'.json';
-				$this->generateJson($name);
-				$cont++;
-				$this->clearAttributes();
+					$data['Foto'] = $people->find('figure img', 0)->src;
+
+					$data['Nome'] =  html_entity_decode($people->find('div.card-desaparecido-info h3', 0)->plaintext);
+				
+					foreach ($people->find('div.card-desaparecido-info p') as $metadata) {
+						$d = trim($metadata->plaintext);
+						if ($d === "")
+							continue;
+						$d = explode(':', $d);
+						if(array_key_exists(1, $d)){
+							$data[$d[0]] = $d[1];
+						}else{
+							$data[$d[0]] = null;
+						}
+					}
+					$data['Estado'] = "Rio Grande do Sul";
+					$this->saveData($data);
+
+					$name = $name = 'PoliciaCivilRS_'.$cont.'.json';
+					$this->generateJson($name);
+					$cont++;
+					$this->clearAttributes();
+				}
 			}
 		}
 	}
@@ -77,14 +81,15 @@ class PoliciaCivilRS implements Scraping{
 		$this->imagem = $data["Foto"];
 		$this->fonte = $data["Fonte"];
 		
-		$this->dt_nascimento = $data["Nascimento"];
-		$this->dt_desaparecimento = $data["Desaparecimento"];
+		$this->data_nascimento = $data["Nascimento"];
+		$this->data_desaparecimento = $data["Desaparecimento"];
 		$this->local_desaparecimento = $data["Local"];		
 		
 		$this->cidade = $data["Local"];
 
 		$this->situacao = "Desaparecida";
 		$this->nome = $data["Nome"];
+		$this->estado = $data["Estado"];
 
 	}
 
@@ -95,7 +100,7 @@ class PoliciaCivilRS implements Scraping{
 
 		$this->imagem = null;
 		$this->fonte = null;
-		$this->dt_nascimento = null;
+		$this->data_nascimento = null;
 		$this->data_desaparecimento = null;
 		$this->local_desaparecimento = null;
 		$this->cidade = null;
@@ -112,8 +117,8 @@ class PoliciaCivilRS implements Scraping{
 				array('idade' => $this->idade),
 				array('sexo' => $this->sexo),
 				array('local_desaparecimento' => $this->local_desaparecimento),
-				array('dt_nascimento' => $this->dt_nascimento),
-                array('dt_desaparecimento' => $this->dt_desaparecimento),
+				array('dt_nascimento' => $this->data_nascimento),
+                array('dt_desaparecimento' => $this->data_desaparecimento),
                 array('cidade' => $this->cidade),
                 array('estado' => $this->estado),
                 array('imagem' => $this->imagem),
